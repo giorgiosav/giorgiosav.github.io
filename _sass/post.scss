@@ -18,15 +18,26 @@ h2 a:hover {
   line-height:2;
 }
 
-
+a.post-link {
+  text-decoration: none;
+  color: black;
+}
 
 .post-preview {
   width: 100%;
   margin-bottom: 20px;
   line-height: 1;
   font-size: 14px;
+  padding: 5px;
 }
 
+.post-preview:hover {
+  background-color: $dark-yellow;
+  border-radius: 10px;
+  border: 2px solid $tepid-black;
+}
+
+/*
 .post-preview-img {
   display: inline-block;
   width: 40%;
@@ -48,7 +59,7 @@ h2 a:hover {
   vertical-align: top;
   height: auto;
 }
-
+*/
 
 .date {
   font-weight: bold;
