@@ -1,23 +1,7 @@
 ---
-layout: default
+layout: articles
 title: Articoli
 lang-id: articles
 lang: it
 ---
 
-{% for post in site.posts %}
-  {% if post.lang == page.lang %}
-    <div class="post-preview">
-
-      <div class="post-preview-img">
-        <img src="{{ post.image }}">
-      </div>
-
-      <div class="post-preview-text">
-        <h2><a href="{{ post.url }}">{{ post.title }}</a></h2>
-        <p>{{ post.excerpt }}</p>
-      </div>
-
-    </div>
-  {% endif %}
-{% endfor %}
