@@ -1,0 +1,58 @@
+h1 {
+  text-align: center;
+  margin-top: 100px;
+}
+
+h2 a {
+  text-decoration: none;
+  color: #000000;
+}
+
+h2 a:hover {
+  text-decoration: underline;
+}
+
+
+#content {
+  margin: 0 20% 10% 20%;
+  line-height:2;
+}
+
+
+
+.post-preview {
+  width: 100%;
+  margin-bottom: 20px;
+  line-height: 1;
+  font-size: 14px;
+}
+
+.post-preview-img {
+  display: inline-block;
+  width: 40%;
+  margin-top: 10px;
+  margin-right: 5%;
+  height: auto;
+}
+
+.post-preview-img img {
+    width: 100%;
+    border: 1px solid black;
+    border-radius: 10px;
+    float: left;
+}
+
+.post-preview-text {
+  width: 45%;
+  display: inline-block;
+  vertical-align: top;
+  height: auto;
+}
+
+
+.date {
+  font-weight: bold;
+  margin: 5px 0px;
+}
+
+

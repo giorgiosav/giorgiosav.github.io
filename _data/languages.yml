@@ -1,0 +1,6 @@
+- name: italiano
+  display: ITA
+  code: it
+- name: english
+  display: ENG
+  code: en
