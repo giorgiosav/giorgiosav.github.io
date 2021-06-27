@@ -3,9 +3,9 @@
 {% if page.lang-id %}
 
   {% if page.layout == "post" %}
-    {% assign translations = site.posts | where_exp: "p", "p.lang-id == page.lang-id and p.lang != page.lang" %}
+    {% assign translations = site.posts | where_exp: "p", "p.lang-id == page.lang-id" | where_exp: "p", "p.lang != page.lang" %}
   {% else %}
-    {% assign translations = site.pages | where_exp: "p", "p.lang-id == page.lang-id and p.lang != page.lang" %}
+    {% assign translations = site.pages | where_exp: "p", "p.lang-id == page.lang-id" | where_exp: "p",  "p.lang != page.lang" %}
   {% endif %}
 
   {% if translations.size > 0 %}
