@@ -144,7 +144,8 @@ dd if=<immagine_linux.iso> of=/dev/rdisk<n> bs=1m
 * `bs` sta per _block size_, `if`/`of` invece per _input/output file_
 
 
-Dovrebbero volerci una decina di minuti -- _et voilà_.
+Dovrebbero volerci una decina di minuti. Il comando `dd` non stampa alcun
+messaggio in esecuzione, ma non vi preoccupate, che il lavoro suo lo fa.
 
 
 ### Avvio da chiavetta USB
@@ -158,6 +159,33 @@ dovrebbe avviare Linux dalla chiavetta.
 
 ## 2 - Trovare il firmware e i pacchetti necessari
 
+### La scheda Wi-Fi
+
+Una volta avviato Linux da chiavetta USB, aprite il terminale ed eseguite:
+
+```
+lspci | grep Broadcom
+```
+
+Dovreste vedere un paio di righe così:
+
+```
+08:00.0 Multimedia controller [etc...]
+09:00.0 Network controller [XXXX]: Broadcom Limited BCMXXXX [etc...]
+```
+
+Annotatevi il numero del modello `BCMXXXX` nella righa del "Network controller".
+
+Se non visualizzate nulla dopo il `grep`, vuol dire che la vostra scheda Wi-Fi
+non è di Broadcom, quindi probabilmente avete un Mac molto vecchio.
+Provate ad eseguire `lspci | grep Atheros`: se la
+vostra scheda Wi-Fi è di Atheros, non c'è bisogno di installare driver
+aggiuntivi, almeno [secondo la pagina di Debian](https://wiki.debian.org/MacBook/Wireless).
+
+
+
+
+### Scaricare i pacchetti offline con `apt-get`
 
 
 ## 3 - Creare una partizione *swap*
@@ -172,5 +200,5 @@ chiavetta USB, ma è abbastanza semplice da fare ed utile. Se avete un po'
 di spazio libero, vi consiglio di crearne una.
 
 
-
+## 5 - 
 
