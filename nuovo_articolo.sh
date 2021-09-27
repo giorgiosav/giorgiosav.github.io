@@ -85,7 +85,7 @@ while true; do
   echo -en "Data: "
   read data
   if [ -z "$data" ]; then
-    data=$(date -j +"%Y-%m-%d")
+    data=$(date +"%Y-%m-%d")
     break
   fi
 
@@ -117,7 +117,7 @@ if [ "$RIASSUNTO" -eq "1" ]; then
 fi
 
 
-FILE="$lingua/_posts/$data-$nome_link.md"
+FILE="$lingua/_drafts/$data-$nome_link.md"
 
 echo "---"                >> $FILE
 echo "layout: post"       >> $FILE
