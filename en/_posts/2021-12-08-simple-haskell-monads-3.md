@@ -69,6 +69,7 @@ fn char2nuc(c: char) -> Result<Nucleotide, char> {
 }
 
 
+// combine count and nucleotideCounts from Haskell code
 pub fn count(dna : &str) -> Result<HashMap<Nucleotide, i32>, char> {
     use Nucleotide::*;
 
@@ -98,7 +99,7 @@ interested).
 
 ## C++
 
-Unlike Rust, C++ does not have sum types like `Either a b`. We could solve the
+Unlike Rust, C++ does not have **sum types** such as `Either a b`. We could solve the
 problem without them, but it's much more interesting to try to create a sum type
 in C++, so here we go.
 
@@ -252,3 +253,8 @@ Either<char, map<Nucleotide, int>> count(string_view dna) {
     return counts;
 }
 ```
+
+<br><br>
+So, which of the 3 versions do you prefer? Personally, I think it would be great
+if C++ had sum types and pattern-matching like Rust and Haskell,
+but for now we'll have to make do.
