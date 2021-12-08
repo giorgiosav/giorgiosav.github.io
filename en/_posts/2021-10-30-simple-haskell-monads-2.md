@@ -7,8 +7,7 @@ lang-id: simple-haskell-monads-2
 ---
 
 This article is number 2 in a 3-part series. If you haven't read the first one,
-you can find it [here]({% link en/_posts/2021-09-25-simple-haskell-monads.md
-%}).
+you can find it [here]({% link en/_posts/2021-09-25-simple-haskell-monads.md %}).
 
 In Part 1, we looked at a few examples of the
 [`sequence`](https://hackage.haskell.org/package/base-4.15.0.0/docs/Prelude.html#v:sequence)
