@@ -1,6 +1,6 @@
 ---
 layout: post
-title: A simple problem in Haskell, using Monads (Part 2/3)
+title: A simple problem in Haskell, using monads (Part 2/3)
 lang: en
 excerpt: How the magic of <code class="highlighter-rouge">sequence</code> and <code class="highlighter-rouge">mapM</code> works.
 lang-id: simple-haskell-monads-2
