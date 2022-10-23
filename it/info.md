@@ -13,4 +13,4 @@ Per contattarmi: jt6h17pe@duck.com.
 
 Ringrazio [Contrast Rebellion](https://contrastrebellion.com/) per il loro
 schema di colori e [KaTeX](https://katex.org/) per la visualizzazione statica
-delle formule matematiche.
+delle formule matematiche. Questo sito usa [Jekyll](https://jekyllrb.com/).
