@@ -8,5 +8,7 @@ en:
     link: /en/
   - name: About
     link: /en/about/
+  - name: Books
+    link: /en/books/
 
 root: /en/
