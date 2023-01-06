@@ -87,3 +87,24 @@ strong {
 a {
   color: $red-orange;
 }
+
+table {
+  border-collapse: collapse;
+  margin: 2em auto;
+}
+
+td, th {
+  border-top: 1px solid $tepid-black;
+  border-bottom: 1px solid $tepid-black;
+  text-align: left;
+  padding: 8px;
+}
+
+tr {
+  border-left: 1px solid $tepid-black;
+  border-right: 1px solid $tepid-black;
+}
+
+tr:nth-child(even) {
+  background-color: $dark-yellow;
+}
