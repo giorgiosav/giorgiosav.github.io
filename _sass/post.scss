@@ -13,9 +13,18 @@ h2 a:hover {
 }
 
 
-#content {
-  margin: 0 20% 10% 20%;
-  line-height: 1.5;
+@media screen and (max-width: 800px) {
+    #content {
+      margin: 0 5% 5% 5%;
+      line-height: 1.5;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    #content {
+      margin: 0 20% 10% 20%;
+      line-height: 1.5;
+    }
 }
 
 a.post-link {
@@ -25,10 +34,19 @@ a.post-link {
 
 .post-preview {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   line-height: 1;
   font-size: 14px;
   padding: 5px;
+}
+
+.post-preview p {
+    line-height: 1.5;
+    margin-top: 5px;
+}
+
+.post-preview h2 {
+    margin-bottom: 5px;
 }
 
 .post-preview:hover {
@@ -36,30 +54,6 @@ a.post-link {
   border-radius: 10px;
   border: 2px solid $tepid-black;
 }
-
-/*
-.post-preview-img {
-  display: inline-block;
-  width: 40%;
-  margin-top: 10px;
-  margin-right: 5%;
-  height: auto;
-}
-
-.post-preview-img img {
-    width: 100%;
-    border: 1px solid black;
-    border-radius: 10px;
-    float: left;
-}
-
-.post-preview-text {
-  width: 45%;
-  display: inline-block;
-  vertical-align: top;
-  height: auto;
-}
-*/
 
 .date {
   font-weight: bold;
