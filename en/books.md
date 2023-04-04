@@ -7,9 +7,7 @@ lang: en
 
 ‼️  **Work in progress** ‼️
 
-I like reading technical books to sharpen my skills, learn new things, etc. This page
-is still a work in progress, but I want to collect here a list of recent books I've
-read and my impressions after finishing them.
+Some quick reviews on technical books that I read.
 
 * _Linear Algebra_, by Jim Hefferon ([link](https://hefferon.net/linearalgebra/)).
 
