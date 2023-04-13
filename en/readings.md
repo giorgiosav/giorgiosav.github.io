@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Books
+title: Readings
 lang-id: books
 lang: en
 ---
