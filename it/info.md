@@ -25,3 +25,8 @@ inglese... ci provo, ma ci vorrà del tempo.
 Ringrazio [Contrast Rebellion](https://contrastrebellion.com/) per il loro
 schema di colori e [KaTeX](https://katex.org/) per la visualizzazione statica
 delle formule matematiche. Questo sito usa [Jekyll](https://jekyllrb.com/).
+
+
+# Mo
+
+{% include_relative _mo.md %}

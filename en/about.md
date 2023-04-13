@@ -24,3 +24,7 @@ Shout out to [Contrast Rebellion](https://contrastrebellion.com/) for their
 color scheme and to [KaTeX](https://katex.org/) for the static rendering of
 mathematical formulas. This website is built with
 [Jekyll](https://jekyllrb.com/)
+
+# Now
+
+{% include_relative _now.md %}
