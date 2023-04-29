@@ -60,4 +60,14 @@ a.post-link {
   margin: 5px 0px;
 }
 
-
+#iframe-foreword > p {
+    float: left;
+    width: 80%;
+    display: inline-block;
+}
+#iframe-foreword > #translation-wrapper {
+    display: inline-block;
+    width: 20%;
+    margin-left: auto;
+    float: right;
+}

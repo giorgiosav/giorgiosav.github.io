@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html lang = "it">
+
+    <head>
+        <title> Appunti di Elettronica </title>
+        <base href="../../">
+        <link href="style.css" rel="stylesheet">
+        <link href="article_style.css" rel="stylesheet">
+        <link href="elettronica/radio_AM/AM_radio_style.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="cel-style.css" media = "screen and (max-width:490px)">
+        <link rel="icon" href ="img/logo.png">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+    </head>
+
+    <body>
+
+        <script type = "text/javascript" src = "navbar.js"></script>
+        <script> document.write(navigation(2)); </script>
+        <noscript>
+            <div id="js-warning">
+                Purtroppo questo sito richiede JavaScript
+            </div>
+        </noscript>
+
+        <div id = "page-content-wrapper">
+
+            <div id = "header">
+                <h1 id = "article-title"> Modulazione di Ampiezza </h1>
+            </div>
+
+            <div id = "publication-date">
+                <hr>
+                19 Giugno 2017
+            </div>
+
+            <div id = "article">
+
+                <p id="small-screen-warning">
+                    <b style = "color:#cc0000"><i class="fa fa-exclamation-triangle"></i>
+                    NOTA: L'applicazione interattiva di questo articolo non è
+                    ancora compatibile con finestre e schermi piccoli.</b>
+
+                </p>
+
+                    <h3> Che vuol dire AM? </h3>
+                    <p>
+                    La sigla AM, che si trova spesso sulle radio accanto ad "FM",
+                    viene dal termine inglese <i>Amplitude Modulation</i>,
+                    ovvero <b>modulazione di ampiezza</b>. Un segnale radio è infatti
+                    costituito da un'onda ad alta frequenza detta <b>portante</b>
+                    ed una a bassa frequenza detta <b>modulante</b>. La
+                    prima è un'onda elettromagnetica (ovvero di luce) che viene
+                    generata da un'antenna e si propaga nello spazio per portare
+                    un messaggio dal trasmettitore al ricevitore, mentre la seconda
+                    contiene il segnale acustico (ovvero il messaggio) da trasmettere.
+                </p>
+
+                <p>
+                    Per descrivere il segnale acustico come una quantità matematica,
+                    possiamo indicare l'onda portante come \(A \sin(\omega_p t) \)
+                    e quella modulante come una serie di prodotti della forma
+                    \( M \cos(\omega_m t) \), dove &omega; sta ad indicare la
+                    frequenza di ogni onda e <i>A</i> ed <i>M</i> sono le ampiezze dei rispettivi
+                    segnali.
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle left-marker" onclick="togglenote(this)"></i>
+                        <span class = "left-note">
+                            Queste espressioni matematiche sono in realtà una semplificazione, perché non
+                            tengono conto delle fasi relative delle varie frequenze presenti
+                            nell'onda modulante, ma per illustrare il concetto sono sufficienti.
+                        </span>
+                    </span>
+
+
+                    L'ultima quantità matematica da introdurre, infine, è il rapporto
+                    fra le ampiezze massime delle due onde (modulante e portante),
+                    ovvero \( \frac M A \), che si chiama indice di modulazione
+                    ed è indicato con il simbolo <i>h</i>. Il segnale completo,
+                    contenente modulante e portante, è quindi per definizione:
+                    $$ [1+M\cos(\omega_m t)]A\sin(\omega_p t) $$
+
+                    Per illustrare il concetto, ho creato qui sotto una piccola
+                    simulazione: inserite i valori di ogni quantità e fate clic
+                    su "Disegna" per visualizzare il segnale radio corrispondente.
+                    Una particolarità aggiunta è che potete inserire più valori di
+                    &omega;<sub>m</sub> separati da virgole, quindi per esempio
+                    se inserite "4, 2, 6, 9" l'onda modulante sarà composta dalle
+                    frequenze 2, 4, 6 e 9. Notate inoltre che, se il valore di <i>h</i>
+                    è maggiore di 1, il segnale viene distorto, in quanto l'onda
+                    modulante è più ampia di quella portante. Per evitare questo
+                    effetto, è importante che \( 0 \leq h \leq 1 \).
+
+                </p>
+
+
+                <span class = "note" >
+                    <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+
+                    <span class = "right-note">
+                        <i>h</i>: indice di modulazione. <br>
+                        <i>&omega;<sub>p</sub></i>: frequenza portante. <br>
+                        <i>&omega;<sub>m</sub></i>: frequenze modulanti (separate da virgola).
+                    </span>
+                </span>
+
+
+                <div class = "simulation-wrapper">
+
+                        <div id = "AM-header-wrapper">
+                        <div id = "AM-legend-wrapper">
+                            <canvas id = "legend-canvas" height = "80" width = "200">
+                                Il tuo browser non è compatibile con l'elemento "canvas".
+                            </canvas>
+
+                        </div> <!-- AM-legend-wrapper -->
+                            <div id = "AM-input-wrapper">
+                                <p>
+                                    <i>h</i>: <input id ="modulation" class = "AM-input"
+                                    type="text" value = "0.5">
+                                    <i>&omega;<sub>p</sub> (rad/s)</i>: <input id ="carrier-frequency" class = "AM-input"
+                                     type="text" value = "40">
+                                 </p>
+                                <p> <button id = "draw"> Disegna </button>
+                                    <i>&omega;<sub>m</sub> (rad/s)</i>: <input id = "modulator-frequency" class = "AM-input"
+                                     type="text" value = "3">
+                                 </p>
+
+                            </div> <!-- AM-input-wrapper -->
+                        </div> <!-- AM-header-wrapper -->
+
+                    <div class = "canvas-wrapper">
+                        <canvas id = "simulation-canvas" class = "canvas" height = "200" width = "688">
+                            Il tuo browser non è compatibile con l'elemento "canvas".
+                        </canvas>
+                    </div>
+                </div> <!-- simulation-wrapper -->
+
+
+
+            </div> <!-- article -->
+
+
+
+
+
+
+
+            <footer>
+                <hr>
+                <h3 id = "sources-header">Fonti</h3>
+
+                <ul id = "sources">
+                    <li> D. Borton, G. Taubin, H. F. Silverman, <i>"Fun with
+                        Resonance: Using Operational Amplifiers to Build an AM
+                        Radio Transmitter"</i>, Brown University, 2015.</li>
+                    <li> Wikipedia, <i>Amplitude Modulation</i>,
+                        <a href = "https://en.wikipedia.org/wiki/Amplitude_modulation" target = "_blank">
+                        https://en.wikipedia.org/wiki/Amplitude_modulation</a>.</li>
+                </ul>
+            </footer>
+
+        </div> <!-- page-content-wrapper -->
+
+    </body>
+    <script type="text/javascript" src = "elettronica/radio_AM/modulazione.js"> </script>
+
+</html>

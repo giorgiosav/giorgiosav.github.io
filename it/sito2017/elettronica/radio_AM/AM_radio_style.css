@@ -1,0 +1,54 @@
+#draw{
+    margin-top: 10px;
+    height: 25px;
+    width: 90px;
+}
+
+
+.AM-input {
+    width: 60px;
+}
+
+
+#AM-header-wrapper {
+    width:100%;
+    margin-left:auto;
+    margin-right: auto;
+    position:relative;
+
+}
+
+#AM-legend-wrapper {
+    width:auto;
+    display: inline-block;
+    position:relative;
+    left:0;
+}
+
+#AM-input-wrapper {
+    width: auto;
+    display: inline-block;
+    position: absolute;
+    right:0;
+}
+
+#AM-input-wrapper p {
+    text-align: right;
+    margin:0;
+}
+
+
+.canvas {
+    background-color: #f3f3f3;
+}
+
+.canvas-wrapper {
+    overflow: hidden;
+    border: 2px solid black;
+}
+
+@media screen and (min-width: 490px) {
+    #small-screen-warning {
+        display: none;
+    }
+}

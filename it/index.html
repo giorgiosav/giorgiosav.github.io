@@ -5,3 +5,22 @@ lang-id: articoli
 lang: it
 ---
 
+<hr>
+
+<h1>Dal Sito Precedente</h1>
+
+<p>
+Nell'estate del 2017 mi dilettai creando il sito
+"<a href="/it/sito2017/index.html">Appunti di Elettronica</a>",
+con qualche articolo di
+elettronica e sulla mia attività di ricerca all'università.
+</p>
+
+{% for post in site.articoli_2017 %}
+  <a href="{{ post.url }}" class="post-link">
+    <div class="post-preview">
+        <h2>{{ post.title }}</h2>
+        <p>{{ post.excerpt }}</p>
+    </div>
+  </a>
+{% endfor %}

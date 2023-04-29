@@ -1,0 +1,185 @@
+body {
+    background-color: #cfcfcf;
+    margin: 0;
+    font-family: Calibri,'Lucida Grande' , sans-serif;
+    width:100%
+}
+
+
+input[type=checkbox] {
+    position: absolute;
+    top: -999px;
+    left: -999px;
+}
+
+label {
+    display:block;
+    width:100%;
+    height:20px;
+}
+
+a {
+    color: #38692e;
+    word-wrap: break-word;
+}
+
+h1, h2, h3, h4, .nav-link, #nav-name, #publication-date {
+    font-family: Georgia, Times, serif;
+}
+
+#navigation-bar {
+    z-index: 5;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    position: fixed;
+    width:100%;
+}
+
+.nav-link {
+    float:left;
+}
+
+#nav-name {
+    font-style: italic;
+    color: #f3e7e7;
+    position:absolute;
+    right:30px;
+    top:15px;
+}
+
+#nav-name:hover {
+    text-decoration: underline;
+}
+
+li.nav-link a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+li.nav-link a:hover:not(.active) {
+    /*background-color: #111;*/
+    background-color: #38692e;
+    font-style: italic;
+}
+
+.active {
+    background-color: #38692e;
+}
+
+#menu {
+    display:none;
+}
+
+#navbar-wrapper {
+    margin:0;
+    width:100%;
+    height: 50.5px;
+}
+
+#sidebar {
+    background-color: #333;
+    position:fixed;
+    left:0;
+    top:50.5px;
+    width:auto;
+    z-index: 4;
+    color: white;
+    height:100%;
+}
+
+#sidebar .nav-link {
+    float:none;
+}
+
+#sidebar ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#js-warning {
+    font-weight: bold;
+    background: #990000;
+    text-align: center;
+    padding: 0.5em;
+    color: white;
+    border: 1px solid black;
+}
+
+#page-content-wrapper {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 50px;
+    padding-top: 40px;
+    width:80%;
+}
+
+#header {
+    margin:auto;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width:100%;
+}
+
+#header h1:not(#article-title) {
+    font-size: 50px;
+    font-variant: small-caps;
+}
+
+
+.article-preview {
+    width: 100%;
+    margin-bottom: 20px;
+    height:auto;
+}
+
+.article-img-wrapper {
+    display:inline-block;
+    height: auto;
+    width: 40%;
+    min-width: 300px;
+    margin-top: 10px;
+    margin-right: 2%;
+}
+
+.article-img-wrapper img {
+    width:100%;
+    border: 1px solid black;
+    border-radius: 10px;
+    float:left;
+    background-color: #f3f3f3;
+}
+
+.article-description {
+    width:45%;
+    min-width: 300px;
+    height:auto;
+    display:inline-block;
+    vertical-align: top;
+}
+
+.article-description h2 {
+    font-size: 20px;
+    font-style: italic;
+}
+
+.article-description h2 a {
+    text-decoration: none;
+    color:black;
+}
+
+.article-description h2 a:hover {
+    text-decoration: underline;
+}
+
+.article-description p {
+    font-size: 15px;
+    text-align: justify;
+}

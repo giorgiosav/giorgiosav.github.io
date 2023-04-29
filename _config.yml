@@ -8,3 +8,7 @@ kramdown:
   auto_ids: true
   syntax_highlighter: rouge
 
+collections:
+  articoli_2017:
+    output: true
+    permalink: /it/:collection/:title

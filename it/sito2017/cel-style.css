@@ -1,0 +1,82 @@
+.article, #publication-date, footer {
+    width: 90%;
+}
+
+#menu {
+    display:block;
+    color: white;
+    padding: 14px 16px;
+    float:left;
+    font-size: 1.2em;
+}
+
+input[type=checkbox]:checked ~ label #menu{
+    background-color: #38692e;
+}
+
+.nav-link:not(#menu) {
+    display:none;
+}
+
+li.nav-link a {
+    text-align: left;
+}
+
+input[type=checkbox]:checked ~ label #menu #sidebar .nav-link{
+    display:block;
+    font-size: 0.8em;
+}
+
+.side-par-img {
+    width:60%;
+    float:none;
+    margin:auto;
+}
+
+.note > .right-note {
+    background-color: #ffece6;
+    width:auto;
+    right:0;
+    z-index: 4;
+    padding:10px;
+    border-radius:10px;
+    border: 1px solid black;
+    display:none;
+}
+
+.note >.left-note {
+    background-color: #ffece6;
+    width:auto;
+    left:0;
+    display: none;
+    z-index: 4;
+    padding:10px;
+    border-radius:10px;
+    border: 1px solid black;
+}
+
+.note .fa {
+    display: inline-block;
+    font-size: 25px;
+    color: #b32d00;
+}
+
+.note:hover .left-note {
+    display: inline-block;
+}
+
+.note:hover .right-note {
+    display: inline-block;
+}
+
+
+.article-description h2 a {
+    background-color: white;
+    padding: 5px 0;
+    border-radius: 10px;
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24);
+}
+

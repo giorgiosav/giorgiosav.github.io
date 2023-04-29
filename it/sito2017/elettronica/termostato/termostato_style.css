@@ -1,0 +1,14 @@
+#circuit {
+    width:90%;
+    height:auto;
+    display:none;
+}
+
+#temppar {
+    font-size: 30px;
+}
+
+#temp {
+    position: relative;
+    left:5%;
+}

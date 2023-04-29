@@ -1,0 +1,11 @@
+#side-par-img {
+    width:30%;
+    height:auto;
+    float:right;
+    margin-top: 0;
+}
+
+#full-img {
+    width:60%;
+    margin:auto;
+}
