@@ -12,21 +12,6 @@ h2 a:hover {
   text-decoration: underline;
 }
 
-
-@media screen and (max-width: 800px) {
-    #content {
-      margin: 0 5% 5% 5%;
-      line-height: 1.5;
-    }
-}
-
-@media screen and (min-width: 800px) {
-    #content {
-      margin: 0 20% 10% 20%;
-      line-height: 1.5;
-    }
-}
-
 a.post-link {
   text-decoration: none;
   color: black;
@@ -65,9 +50,35 @@ a.post-link {
     width: 80%;
     display: inline-block;
 }
+
 #iframe-foreword > #translation-wrapper {
     display: inline-block;
     width: 20%;
     margin-left: auto;
     float: right;
 }
+
+
+@media screen and (max-width: 800px) {
+    #content {
+      margin: 0 5% 5% 5%;
+      line-height: 1.5;
+    }
+
+    #iframe-foreword > p {
+        width: 50%;
+        margin-top: 0;
+    }
+
+    #iframe-foreword > #translation-wrapper {
+        width: 50%;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    #content {
+      margin: 0 20% 10% 20%;
+      line-height: 1.5;
+    }
+}
+
