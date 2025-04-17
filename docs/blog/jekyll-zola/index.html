@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  I switched from Jekyll to Zola
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+    
+      <a href="&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articles
+      </a>
+    
+      <a href="&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        About
+      </a>
+    
+      <a href="&#x2F;it"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Italiano
+      </a>
+    
+  
+
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  I switched from Jekyll to Zola
+</h1>
+      
+
+
+  
+    
+  
+
+
+      
+
+  
+    <div class="date">2025-04-16</div>
+  
+
+  <p>I'm no longer using <a href="https://jekyllrb.com/">Jekyll</a> to build this website. I just switched to
+<a href="https://www.getzola.org/">Zola</a>. I didn't dislike Jekyll or anything, but
+every time I tried to build my website after some period of inactivity
+I would get this:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>   Liquid Exception: undefined method &#39;tainted?&#39; for an instance of String in /_layouts/post.html
+</span><span>[...]
+</span><span>/path/to/liquid/variable.rb:124:in &#39;Liquid:Variable#taint_check&#39;: undefined method &#39;tainted?&#39; for an instance of String (NoMethodError)
+</span><span>
+</span><span>        return unless obj.tainted?
+</span></code></pre>
+<p>Uhm... what?</p>
+<p>I'm not familiar with Ruby and its ecosystem and, while I'd be happy to learn, it's
+not really my top priority right now. So, when this happened, I would spend some time looking for the
+correct incantation, updating the right dependencies until I could finally build
+my website again... only to see some other variation of this message a few months
+later.</p>
+<p>I never had the time to figure out what was wrong with my setup and, the last time this happened to me,
+there was no magical incantation that would fix the issue. I even tried reinstalling Jekyll and
+Ruby, messing with the lock file, but nothing. I was knee-deep in Dependency Hell and decided to bail.</p>
+<p>Zola is a simple alternative to Jekyll with almost no dependencies. Syntax highlighting comes out of the
+box. You can create feeds just by setting an option in the configuration file. And what I find really
+cool is that it comes with multilingual support! I managed to actually reduce the size of my code base
+simply by deleting all the template boilerplate code I had in place to support multiple languages.</p>
+<p>The other thing I like about Zola is that, for now, it has fewer idiosyncrasies and is easier to learn.
+There are fewer top-level directories with magical names: your templates don't need to be split between
+<code>_layouts</code> and <code>_includes</code>, for example. There's no <code>_data</code> directory, no <code>site</code> variable that you need to remember.
+Everything is a bit more compact and, for my simple requirements, I appreciate that. There are of course
+some missing features, but nothing essential. So far, the only thing I was mildly bothered about was that
+I couldn't prettify links in the <code>{year}/{month}/{day}/{title}</code> format, but then I got over it. Who looks
+at the URL format anyway?</p>
+<p>Deploying on Github Pages is also really easy. There's <a href="https://www.getzola.org/documentation/deployment/github-pages/">a guide</a>
+on their website, but you don't even need to go that far. Just create a branch called
+<code>gh-pages</code> and check in all build files under <code>docs/</code>. Then in the repository settings,
+select to deploy from the <code>docs</code> folder in <code>gh-pages</code> and that's it. You can update the
+<code>gh-pages</code> branch manually, or create a <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks">git hook</a>
+to update it automatically on each commit.</p>
+<p>The migration from Jekyll to Zola was a little involved, but as I said, I ended up with a smaller
+code base to maintain, so I'm pretty happy with the switch for now. The only thing I wish Zola had,
+but that no static site generator that I know of has, is built-in support for math rendering. But
+that's a story for <a href="https://giorgiosav.github.io/blog/math-web/">another time</a>.</p>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>

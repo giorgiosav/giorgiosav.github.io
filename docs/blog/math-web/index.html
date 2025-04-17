@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  You win, Javascript
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+      <script>
+          document.addEventListener("DOMContentLoaded", function() {
+              renderMathInElement(document.body, {
+                // customised options
+                // • auto-render specific keys, e.g.:
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "§", right: "§", display: false},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\begin{equation}", right: "\\end{equation}", display: true},
+                    {left: "\\begin{align}", right: "\\end{align}", display: true},
+                    {left: "\\begin{alignat}", right: "\\end{alignat}", display: true},
+                    {left: "\\begin{gather}", right: "\\end{gather}", display: true},
+                    {left: "\\begin{CD}", right: "\\end{CD}", display: true},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                // • rendering keys, e.g.:
+                throwOnError : false
+              });
+          });
+      </script>
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+    
+      <a href="&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articles
+      </a>
+    
+      <a href="&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        About
+      </a>
+    
+      <a href="&#x2F;it"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Italiano
+      </a>
+    
+  
+
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  You win, Javascript
+</h1>
+      
+
+
+  
+    
+  
+
+
+      
+
+  
+    <div class="date">2025-04-17</div>
+  
+
+  <p>I don't dislike Javascript. <strong>BUT</strong>. It tends to be overused and bloated and antithetical to privacy.</p>
+<p>I often find that I need to switch off Javascript in order to get a break from the
+exuberant madness of the modern Web. Why does everything have to move? Why do you
+have to shove videos in my face and play them automatically while I'm trying to read?</p>
+<p>Anyway, I don't want this article to be a crusade on Javascript. However, I did want
+my website to be a Javascript-free-zone as much as possible. Unfortunately, I haven't found
+a simple way to write Math on the Web without using Javascript.</p>
+<p>... which... makes no sense to me! The mathematical formulas aren't going to change, are they?
+They're static! Why do we use Javascript to render them in exactly the same way every time? Why
+don't we statically generate the HTML once and be done with it? Maybe I'm missing something, but
+I really feel like, in most cases, you really don't need to be parsing the formulas and generating
+the HTML dynamically every single time.</p>
+<p>Fun fact, though: HTML does in fact support typesetting mathematical expressions, through
+a standard called <a href="https://developer.mozilla.org/en-US/docs/Web/MathML">MathML</a>, which was
+later simplified to <a href="https://www.w3.org/TR/mathml-core/">MathML Core</a>.
+<a href="https://andrewlock.net/rendering-math-in-html-mathml-mathml-core-and-asciimath/">This article</a> has
+a good, short-and-sweet introduction to the topic, if you're interested. So I tried to
+use MathML in some of my articles, like <a href="https://giorgiosav.github.io/blog/fun-roots/">this one</a>.
+Here's the source for the last formula:</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">span </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">math-center</span><span>&quot;&gt;
+</span><span>  &lt;</span><span style="color:#bf616a;">math</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">semantics</span><span>&gt;
+</span><span>      &lt;</span><span style="color:#bf616a;">mrow</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;</span><span style="color:#8fa1b3;">&amp;</span><span style="color:#d08770;">rArr;</span><span>&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">msub</span><span>&gt;
+</span><span>          &lt;</span><span style="color:#bf616a;">mi</span><span>&gt;x&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;
+</span><span>          &lt;</span><span style="color:#bf616a;">mrow</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">mi</span><span>&gt;k&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;+&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">mn</span><span>&gt;1&lt;/</span><span style="color:#bf616a;">mn</span><span>&gt;
+</span><span>          &lt;/</span><span style="color:#bf616a;">mrow</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">msub</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;=&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">mfrac</span><span>&gt;&lt;</span><span style="color:#bf616a;">mn</span><span>&gt;1&lt;/</span><span style="color:#bf616a;">mn</span><span>&gt;&lt;</span><span style="color:#bf616a;">mi</span><span>&gt;r&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;&lt;/</span><span style="color:#bf616a;">mfrac</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;(&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">mrow</span><span>&gt;
+</span><span>          &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;(&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>          &lt;</span><span style="color:#bf616a;">mi</span><span>&gt;r&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;
+</span><span>          &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;-&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>          &lt;</span><span style="color:#bf616a;">mn</span><span>&gt;1&lt;/</span><span style="color:#bf616a;">mn</span><span>&gt;
+</span><span>          &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;)&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">mrow</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">msub</span><span>&gt;&lt;</span><span style="color:#bf616a;">mi</span><span>&gt;x&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;&lt;</span><span style="color:#bf616a;">mi</span><span>&gt;k&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;&lt;/</span><span style="color:#bf616a;">msub</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;+&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">mfrac</span><span>&gt;
+</span><span>          &lt;</span><span style="color:#bf616a;">mi</span><span>&gt;n&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;
+</span><span>          &lt;</span><span style="color:#bf616a;">msubsup</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">mi</span><span>&gt;x&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">mi</span><span>&gt;k&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">mrow</span><span>&gt;
+</span><span>              &lt;</span><span style="color:#bf616a;">mi</span><span>&gt;r&lt;/</span><span style="color:#bf616a;">mi</span><span>&gt;
+</span><span>              &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;-&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>              &lt;</span><span style="color:#bf616a;">mn</span><span>&gt;1&lt;/</span><span style="color:#bf616a;">mn</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">mrow</span><span>&gt;
+</span><span>          &lt;/</span><span style="color:#bf616a;">msubsup</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">mfrac</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">mo</span><span>&gt;)&lt;/</span><span style="color:#bf616a;">mo</span><span>&gt;
+</span><span>      &lt;/</span><span style="color:#bf616a;">mrow</span><span>&gt;
+</span><span>      &lt;</span><span style="color:#bf616a;">annotation</span><span>&gt;
+</span><span>        </span><span style="color:#65737e;">&lt;!-- This is an &quot;alternative representation&quot;, in case the browser
+</span><span style="color:#65737e;">              cannot render the expression above. It doesn&#39;t get parsed --&gt;
+</span><span>        \Rightarrow x_{k+1} = \frac{1}{r}\left((r-1)x_k + \frac{n}{x_k^{r-1}}\right)
+</span><span>      &lt;/</span><span style="color:#bf616a;">annotation</span><span>&gt;
+</span><span>    &lt;/</span><span style="color:#bf616a;">semantics</span><span>&gt;
+</span><span>  &lt;/</span><span style="color:#bf616a;">math</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">span</span><span>&gt;
+</span></code></pre>
+<p>And here's what it looks like:</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <mo>&rArr;</mo>
+        <msub>
+          <mi>x</mi>
+          <mrow>
+            <mi>k</mi>
+            <mo>+</mo>
+            <mn>1</mn>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <mfrac><mn>1</mn><mi>r</mi></mfrac>
+        <mo>(</mo>
+        <mrow>
+          <mo>(</mo>
+          <mi>r</mi>
+          <mo>-</mo>
+          <mn>1</mn>
+          <mo>)</mo>
+        </mrow>
+        <msub><mi>x</mi><mi>k</mi></msub>
+        <mo>+</mo>
+        <mfrac>
+          <mi>n</mi>
+          <msubsup>
+            <mi>x</mi>
+            <mi>k</mi>
+            <mrow>
+              <mi>r</mi>
+              <mo>-</mo>
+              <mn>1</mn>
+            </mrow>
+          </msubsup>
+        </mfrac>
+        <mo>)</mo>
+      </mrow>
+      <annotation>
+        \Rightarrow x_{k+1} = \frac{1}{r}\left((r-1)x_k + \frac{n}{x_k^{r-1}}\right)
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<p>Now compare that to the more conventional TeX notation:</p>
+<pre data-lang="latex" style="background-color:#2b303b;color:#c0c5ce;" class="language-latex "><code class="language-latex" data-lang="latex"><span>$$</span><span style="color:#96b5b4;">\Rightarrow </span><span style="color:#bf616a;">x</span><span>_{</span><span style="color:#bf616a;">k</span><span>+</span><span style="color:#d08770;">1</span><span>} = </span><span style="color:#96b5b4;">\frac</span><span>{</span><span style="color:#d08770;">1</span><span>}{</span><span style="color:#bf616a;">r</span><span>}</span><span style="color:#96b5b4;">\left</span><span style="color:#d08770;">((</span><span style="color:#bf616a;">r</span><span>-</span><span style="color:#d08770;">1)</span><span style="color:#bf616a;">x</span><span>_</span><span style="color:#bf616a;">k </span><span>+ </span><span style="color:#96b5b4;">\frac</span><span>{</span><span style="color:#bf616a;">n</span><span>}{</span><span style="color:#bf616a;">x</span><span>_</span><span style="color:#bf616a;">k</span><span>^{</span><span style="color:#bf616a;">r</span><span>-</span><span style="color:#d08770;">1</span><span>}}</span><span style="color:#96b5b4;">\right</span><span style="color:#d08770;">)</span><span>$$
+</span></code></pre>
+<p>And how it's rendered by <a href="https://www.katex.org">KaTeX</a>:</p>
+<p>$$\Rightarrow x_{k+1} = \frac{1}{r}\left((r-1)x_k + \frac{n}{x_k^{r-1}}\right)$$</p>
+<p>Which one looks better, and which one is easier to write out?</p>
+<p>Of course, KaTeX is able to statically render mathematical expressions in HTML, but
+no static site generator uses a Math rendering engine, as far as I know.</p>
+<p>So yeah, I had to give up and accept that some pages on my website will use
+external resources and run Javascript. I'm placing my hope in the second quarter
+of the 21st century. I'm also willing to contribute to the effort, so please
+<a href="https://giorgiosav.github.io/about/">contact me</a> if you're working on this and would like some help</p>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>
