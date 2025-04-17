@@ -10,5 +10,5 @@ lang-id = "about"
 
 Ringrazio [Contrast Rebellion](https://contrastrebellion.com/) per il loro
 schema di colori. Le formule matematiche sono scritte con
-[MathML Core](https://www.w3.org/TR/mathml-core/) (senza stile CSS per ora).
+[MathML Core](https://www.w3.org/TR/mathml-core/) e [Katex](https://www.katex.org).
 Questo sito usa [Zola](https://www.getzola.org/).
