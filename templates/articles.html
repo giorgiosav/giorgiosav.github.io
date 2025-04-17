@@ -1,0 +1,31 @@
+
+{% extends "default.html" %}
+
+
+{% block tabtitle %}
+{{ section.title | safe }}
+{% endblock tabtitle %}
+
+{% block title %}
+{{ section.title | safe }}
+{% endblock title %}
+
+{% block content %}
+
+{% for post in section.pages %}
+  {# iframe_url is only for 2017 articles from old website #}
+  {% if post.lang == section.lang and not post.extra.iframe_url %}
+  <a href="{{ post.permalink }}" class="post-link">
+    <div class="post-preview">
+        <h2>{{ post.title | safe }}</h2>
+        <p>{{ post.description | safe }}</p>
+    </div>
+  </a>
+  {% endif %}
+{% endfor %}
+
+{{ section.content | safe }}
+
+{% block articles_extra %} {% endblock articles_extra %}
+
+{% endblock content %}

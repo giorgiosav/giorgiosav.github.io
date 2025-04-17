@@ -1,0 +1,17 @@
+
+
+{% if page %}
+  {% for translation in page.translations %}
+    {% if translation.lang != page.lang %}
+      <div id="translation-wrapper">
+        <a id="translation" href = "{{ translation.permalink }}">
+          {% if translation.lang == "en" %}
+            Read in English
+          {% elif translation.lang == "it" %}
+            Leggi in italiano
+          {% endif %}
+        </a>
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}

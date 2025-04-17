@@ -1,0 +1,120 @@
+
+@import "colors";
+
+$background-color: $light-yellow;
+$navbar-color: $tepid-black;
+$navbar-text-color: $dark-yellow;
+
+
+body {
+  background-color: $background-color;
+  margin: 0;
+  font-family: helvetica, arial, sans-serif;
+  width:100%
+}
+
+nav {
+  background-color: $navbar-color;
+  margin: 0;
+  width: 100%;
+  height:50px;
+  position:fixed;
+  top:0;
+}
+
+a.nav-link {
+  text-align: center;
+  text-decoration: none;
+  height: 18px;
+  color: $navbar-text-color;
+}
+
+a.nav-link-left {
+  padding: 16px 14px;
+  font-size: 1.2em;
+  float: left;
+  @media screen and (max-width: 800px) {
+    font-size: 1em;
+  }
+}
+
+a.nav-link-inactive {
+  color: $navbar-text-color;
+}
+
+a.nav-link-active {
+  font-weight: bolder;
+  font-style: italic;
+}
+
+
+a.nav-link:hover {
+  background-color: $navbar-text-color;
+  color: $navbar-color;
+}
+
+a.nav-lang {
+  padding: 16px 10px;
+  font-size: 0.8em;
+  float: right;
+  @media screen and (max-width: 800px) {
+    font-size: 0.6em;
+  }
+}
+
+#translation-wrapper {
+  width: 100%;
+  overflow: auto; // adjusts height to floating child
+}
+
+#translation {
+  float: right;
+  background-color: $tepid-black;
+  padding: 8px 10px;
+  display: inline-block;
+  margin: 10px 0px;
+  border-radius: 20px;
+  color: $background-color;
+  text-decoration: none;
+  font-size: 0.8em;
+}
+
+#translation:hover {
+  background-color: $red-orange;
+}
+
+strong {
+  color: $red-orange;
+}
+
+a {
+  color: $red-orange;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 2em auto;
+}
+
+td, th {
+  border-top: 1px solid $tepid-black;
+  border-bottom: 1px solid $tepid-black;
+  text-align: left;
+  padding: 8px;
+}
+
+tr {
+  border-left: 1px solid $tepid-black;
+  border-right: 1px solid $tepid-black;
+}
+
+tr:nth-child(even) {
+  background-color: $dark-yellow;
+}
+
+code:not(pre *) {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 2px 4px;
+  background-color: #f8f8f8;
+}

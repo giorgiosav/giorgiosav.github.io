@@ -1,0 +1,33 @@
+
+{% extends "default.html" %}
+
+
+{% block tabtitle %}
+  {{ page.title | safe }}
+{% endblock tabtitle %}
+
+{% block title %}
+  {{ page.title | safe }}
+{% endblock title %}
+
+{% block content %}
+
+  {% if page.date %}
+    <div class="date">{{ page.date | date(format="%Y-%m-%d") }}</div>
+  {% endif %}
+
+  {{ page.content | safe }}
+
+  {% if page.extra.iframe_url %}
+    {% include "iframe-article.html" %}
+  {% endif %}
+
+{% endblock content %}
+
+{% block base_extra %}
+
+  {% if page.extra.iframe_url %}
+    <iframe src="{{ page.extra.iframe_url }}" title="{{ page.title }}" width="98%" height="600">
+  {% endif %}
+
+{% endblock base_extra %}

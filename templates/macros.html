@@ -1,0 +1,23 @@
+
+{% macro navigation(obj) %}
+
+<nav>
+{% for lang, items in config.extra.navigation %}
+  {% if lang == obj.lang %}
+    {% for item in items %}
+      <a href="{{ item.link }}"
+          class="nav-link nav-link-left
+                  {% if obj.path == item.link %}
+                    nav-link-active 
+                  {% else %}
+                    nav-link-inactive
+                  {% endif %}">
+        {{ item.name }}
+      </a>
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+
+</nav>
+
+{% endmacro navigation %}
