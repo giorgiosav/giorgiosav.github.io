@@ -1,0 +1,351 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  Modular exponentials
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+    
+      <a href="&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articles
+      </a>
+    
+      <a href="&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        About
+      </a>
+    
+      <a href="&#x2F;it"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Italiano
+      </a>
+    
+  
+
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  Modular exponentials
+</h1>
+      
+
+
+  
+    
+  
+    
+      <div id="translation-wrapper">
+        <a id="translation" href = "https:&#x2F;&#x2F;giorgiosav.github.io&#x2F;it&#x2F;blog&#x2F;mod-exp&#x2F;">
+          
+            Leggi in italiano
+          
+        </a>
+      </div>
+    
+  
+
+
+      
+
+  
+    <div class="date">2022-10-16</div>
+  
+
+  <p>Modular exponentials are used in
+<a href="https://en.wikipedia.org/wiki/Fermat_primality_test">various</a>
+<a href="https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test">different</a>
+algorithms, mostly in cryptography. Let's dive right in with an example: given
+2 large positive integers <em>a</em> and <em>p</em>, we want to compute the following with
+32-bit integers (<code>uint32_t</code>).</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mi>a</mi>
+          <mi>p</mi>
+        </msup>
+        <mspace width="5px"/>
+        <ms>mod</ms>
+        <mspace width="5px"/>
+        <mi>p</mi>
+      </mrow>
+      <annotation>
+        a^p \mod p
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<p>Let's pretend that 53 and 91 are large numbers - we then have</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mi>53</mi>
+          <mi>91</mi>
+        </msup>
+        <mspace width="5px"/>
+        <ms>mod</ms>
+        <mspace width="5px"/>
+        <mi>91</mi>
+      </mrow>
+      <annotation>
+        53^{91} \mod 91
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<br>
+<span class="math-inline">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mi>53</mi>
+          <mi>91</mi>
+        </msup>
+      </mrow>
+      <annotation>
+        53^{91} \mod 91
+      </annotation>
+    </semantics>
+  </math>
+</span>
+ is an astronomical number, which wouldn't fit in less than 500 or so bits,
+so we need to come up with an indirect way of computing its value modulo 91.
+The first algorithm that might come to mind is the following one, where we
+iteratively multiply an accumulator and take its value modulo 91 each time.
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#65737e;">// assume mod &gt; 1, ignore 0^0
+</span><span>uint32_t </span><span style="color:#8fa1b3;">mod_pow</span><span>(uint32_t </span><span style="color:#bf616a;">base</span><span>, uint32_t </span><span style="color:#bf616a;">exp</span><span>, uint32_t </span><span style="color:#bf616a;">mod</span><span>) {
+</span><span>    base %= mod;
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(base == </span><span style="color:#d08770;">0</span><span>) </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span>    uint32_t accumulator = </span><span style="color:#d08770;">1</span><span>;
+</span><span>    </span><span style="color:#b48ead;">for </span><span>(uint32_t i = </span><span style="color:#d08770;">0</span><span>; i &lt; exp; ++i) {
+</span><span>        accumulator = (accumulator * base) % mod;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">return</span><span> accumulator;
+</span><span>}
+</span></code></pre>
+<p>One crucial detail to keep in mind here is that <code>accumulator * base</code> might not
+fit into a 32-bit integer. Since both <code>accumulator</code> and <code>base</code> must be less than
+<code>mod - 1</code>, all we need to do is verify at the beginning of the function that
+<code>(mod - 1) * (mod - 1)</code> fits into a <code>uint32_t</code>.</p>
+<p>Can't we do better than this naive algorithm though? The answer (luckily) is
+yes: you can find some pseudocode on
+<a href="https://en.wikipedia.org/wiki/Modular_exponentiation#Pseudocode">this page</a>,
+but I'll try to explain it below.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span>uint32_t </span><span style="color:#8fa1b3;">mod_pow</span><span>(uint32_t </span><span style="color:#bf616a;">base</span><span>, uint32_t </span><span style="color:#bf616a;">exp</span><span>, uint32_t </span><span style="color:#bf616a;">mod</span><span>) {
+</span><span>
+</span><span>    base %= mod;
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(base == </span><span style="color:#d08770;">0</span><span>) </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span>    uint32_t accumulator = </span><span style="color:#d08770;">1</span><span>;
+</span><span>    </span><span style="color:#b48ead;">while </span><span>(</span><span style="color:#d08770;">true</span><span>) {
+</span><span>        </span><span style="color:#b48ead;">if </span><span>(exp &amp; </span><span style="color:#d08770;">1</span><span>) accumulator = (accumulator * base) % mod;
+</span><span>        exp &gt;&gt;= </span><span style="color:#d08770;">1</span><span>;
+</span><span>        </span><span style="color:#b48ead;">if </span><span>(exp == </span><span style="color:#d08770;">0</span><span>) </span><span style="color:#b48ead;">break</span><span>;
+</span><span>        base = (base * base) % mod;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">return</span><span> accumulator;
+</span><span>}
+</span></code></pre>
+<p>The trick to understand this algorithm is to write the exponent (91) in binary
+form (<code>1011011</code>):</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <mn>91</mn>
+        <mo>=</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>6</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>4</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>3</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>1</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>0</mn>
+        </msup>
+      </mrow>
+      <annotation>
+        91 = 2^6 + 2^4 + 2^3 + 2^1 + 2^0
+      </annotation>
+  </semantics>
+  </math>
+</span>
+<br>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <ms>&rArr;</ms>
+        <mspace width="10px"/>
+        <msup>
+          <mn>53</mn>
+          <mn>91</mn>
+        </msup>
+        <mo>=</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>6</mn>
+          </msup>
+        </msup>
+        <mo>&middot;</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>4</mn>
+          </msup>
+        </msup>
+        <mo>&middot;</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>3</mn>
+          </msup>
+        </msup>
+        <mo>&middot;</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>1</mn>
+          </msup>
+        </msup>
+        <mo>&middot;</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>0</mn>
+          </msup>
+        </msup>
+      </mrow>
+      <annotation>
+        53^{91} = 53^{2^6} + 53^{2^4} + 53^{2^3} + 53^{2^1} + 53^{2^0}
+      </annotation>
+  </semantics>
+  </math>
+</span>
+<p>We can then build up the result by multiplying the accumulator with the value
+corresponding to each <code>1</code> bit, while skipping all the <code>0</code>s. Let's take a closer
+look at the <code>while</code> loop:</p>
+<ul>
+<li><code>if (esp &amp; 1)</code>: if the exponent is odd, we multiply the accumulator by the
+base. Since, in general, <code>a * b % p == (a % p) * (b % p)</code>, we can apply the
+modulo operator at any time.</li>
+<li><code>exp &gt;&gt;= 1</code>: move onto the next bit of the exponent.</li>
+<li><code>base = (base * base) % mod</code>: the next bit corresponds to the square of the
+current base. For example, the fifth bit corresponds to:</li>
+</ul>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>4</mn>
+          </msup>
+        </msup>
+        <mo>=</mo>
+        <msup>
+          <mn>53</mn>
+          <mrow>
+            <mn>2</mn>
+            <mo>&middot;</mo>
+            <msup><mn>2</mn><mn>3</mn></msup>
+          </mrow>
+        </msup>
+        <mo>=</mo>
+        <msup>
+          <mrow>
+            <mo>(</mo>
+            <msup>
+              <mn>53</mn>
+              <msup>
+                <mn>2</mn>
+                <mn>3</mn>
+              </msup>
+            </msup>
+            <mo>)</mo>
+          </mrow>
+          <mn>2</mn>
+        </msup>
+      </mrow>
+      <annotation>
+        53^{2^4} = 53 ^ {2 \cdot 2^3} = \left( 53^{2^3} \right)^2
+      </annotation>
+  </semantics>
+  </math>
+</span>
+<p>And that's all, folks! The first algorithm has runtime <code>O(exp)</code>, whereas the
+second one is <code>O(log(exp))</code>, so the winner is pretty clear.</p>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>

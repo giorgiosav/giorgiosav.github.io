@@ -1,0 +1,319 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  A simple problem in Haskell, using monads (Part 1/3)
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+    
+      <a href="&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articles
+      </a>
+    
+      <a href="&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        About
+      </a>
+    
+      <a href="&#x2F;it"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Italiano
+      </a>
+    
+  
+
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  A simple problem in Haskell, using monads (Part 1/3)
+</h1>
+      
+
+
+  
+    
+  
+
+
+      
+
+  
+    <div class="date">2021-09-25</div>
+  
+
+  <p>I've been trying to learn Haskell recently,
+so after reading some intro material
+I set up an account on <a href="https://www.exercism.org">Exercism</a> and signed up
+for the Haskell track to get some practice. One of the very first exercises
+in the track is called
+<a href="https://exercism.org/tracks/haskell/exercises/nucleotide-count">Nucleotide Count</a>
+and, while it seems very simple at first glance, I found it useful to
+get an initial grasp of monads. I'll describe the (slightly modified) exercise
+here and how to solve it in Haskell.</p>
+<p>This article is the first of a 3-part series. It doesn't assume much prior
+knowledge of Haskell (I'm very much a beginner at the moment), but  it's good to
+know the basics if you want to follow along
+(syntax, basic functions, etc...). You might also want to read
+up on
+<a href="http://learnyouahaskell.com/functors-applicative-functors-and-monoids">functors</a>,
+if you don't know what they are, though it's not really necessary.</p>
+<p>In <strong>Part 1</strong> of the series (this article), I'll explain how to solve the "Nucleotide Count"
+problem using monads, then in <strong>Part 2</strong>
+I'll dive into the implementation of <code>mapM</code> and <code>sequence</code> and finally, in <strong>Part
+3</strong>, I'll try to solve this same problem imperatively in C++ and Rust, for comparison.</p>
+<h2 id="problem-description">Problem Description</h2>
+<p>I don't know much about Biology, unfortunately... but anyway DNA is made up
+for 4 molecules called "nucleotides", whose symbols are A, C, G and T. You are
+given a string of these nucleotides (e.g. <code>"ACCTTTGCTATC"</code>) and need to return
+a map with each nucleotide and the number of times it appears in the input
+string, so for example:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Input: &quot;ACCTTTCTGACAA&quot;
+</span><span>Output: {A:4, C:3, G:1, T:4}
+</span></code></pre>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Input: &quot;&quot;
+</span><span>Output: {A:0, C:0, G:0, T:0}
+</span></code></pre>
+<p>The keys in the map are their own type (<code>Nucleotide</code>), not <code>Char</code>s.
+Finally, if there are any invalid characters in the input string, you
+should return the first one.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Input: &quot;CCXATAGCABYZ&quot;
+</span><span>Output: &#39;X&#39;
+</span></code></pre>
+<p>Let's frame this in terms of Haskell code. We'll implement a function
+called <code>nucleotideCounts</code>. Since we're returning either a character or a map,
+the return type will be <code>Either Char (Map Nucleotide Int)</code>.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#b48ead;">module </span><span>DNA (</span><span style="color:#8fa1b3;">nucleotideCounts</span><span>, </span><span style="color:#b48ead;">Nucleotide</span><span style="color:#8fa1b3;">(..)</span><span>) </span><span style="color:#b48ead;">where
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>Data.Map (</span><span style="color:#b48ead;">Map</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">data </span><span style="color:#d08770;">Nucleotide </span><span>= </span><span style="color:#d08770;">A </span><span>| </span><span style="color:#d08770;">C </span><span>| </span><span style="color:#d08770;">G </span><span>| </span><span style="color:#d08770;">T </span><span style="color:#b48ead;">deriving</span><span> (</span><span style="color:#a3be8c;">Eq</span><span>, </span><span style="color:#a3be8c;">Ord</span><span>, </span><span style="color:#a3be8c;">Show</span><span>)
+</span><span>
+</span><span style="color:#8fa1b3;">nucleotideCounts </span><span style="color:#b48ead;">:: String -&gt; Either Char</span><span> (</span><span style="color:#b48ead;">Map Nucleotide Int</span><span>)
+</span><span>nucleotideCounts s = </span><span style="color:#65737e;">-- TODO
+</span></code></pre>
+<h2 id="first-attempt">First Attempt</h2>
+<p>This seems like a pretty simple problem, right? At first glance, it is, but
+for those like me who are new to functional programming, there are a few
+insidious details to tackle, as we'll see. My first idea was to implement a function
+<code>char2nuc</code>, that takes takes a character and returns <code>Either Char Nucleotide</code>.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#8fa1b3;">char2nuc </span><span style="color:#b48ead;">:: Char -&gt; Either Char Nucleotide
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">A</span><span>&#39; = </span><span style="color:#d08770;">Right A
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">C</span><span>&#39; = </span><span style="color:#d08770;">Right C
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">G</span><span>&#39; = </span><span style="color:#d08770;">Right G
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">T</span><span>&#39; = </span><span style="color:#d08770;">Right T
+</span><span>char2nuc x = </span><span style="color:#d08770;">Left</span><span> x
+</span></code></pre>
+<p>The value constructor <code>Right</code> indicates a valid result, whereas <code>Left</code> means
+that the input character was not a valid nucleotide (e.g. <code>char2nuc 'X' == Left 'X'</code>). Now what do we get if we map <code>char2nuc</code> onto a <code>String</code>?</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span>map char2nuc &quot;</span><span style="color:#a3be8c;">ACTGTCAAAC</span><span>&quot;
+</span></code></pre>
+<p>What is the type of this expression? Let's take a look.</p>
+<ul>
+<li><code>char2nuc :: Char -&gt; Either Char Nucleotide</code></li>
+<li>A <code>String</code> is really a <code>[Char]</code></li>
+<li><code>map :: (a -&gt; b) -&gt; [a] -&gt; [b]</code></li>
+</ul>
+<p>If we specialize <code>map</code> with <code>a = Char</code> and <code>b = Either Char Nucleotide</code>, when we
+map <code>char2nuc</code> onto a string our result type is <code>[b]</code>, or <code>[Either Char Nucleotide]</code>.</p>
+<p>Now what? How do you deal with a list of <code>Either Char Nucleotide</code> and reduce it
+to the <code>Either Char (Map Nucleotide Int)</code> that we need? You <em>could</em> use <code>foldl</code>
+and wrestle with types to get a working solution, but if you dive
+a little bit into monads there is a much simpler way.</p>
+<h2 id="the-magic-of-sequence-and-mapm">The Magic of <code>sequence</code> and <code>mapM</code></h2>
+<p>While trying to wrap my head around this problem, I came across the
+<a href="https://hackage.haskell.org/package/base-4.15.0.0/docs/Prelude.html#v:sequence"><code>sequence</code></a>
+function.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#8fa1b3;">sequence </span><span style="color:#b48ead;">::</span><span> (</span><span style="color:#b48ead;">Traversable </span><span style="color:#bf616a;">t</span><span>, </span><span style="color:#b48ead;">Monad </span><span style="color:#bf616a;">m</span><span>) </span><span style="color:#b48ead;">=&gt; </span><span style="color:#bf616a;">t</span><span> (</span><span style="color:#bf616a;">m a</span><span>) </span><span style="color:#b48ead;">-&gt; </span><span style="color:#bf616a;">m</span><span> (</span><span style="color:#bf616a;">t a</span><span>)
+</span></code></pre>
+<p>In our case, <code>Traversable t</code> is just a list, so we can simplify the definition
+like this.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#8fa1b3;">sequence </span><span style="color:#b48ead;">::</span><span> (</span><span style="color:#b48ead;">Monad </span><span style="color:#bf616a;">m</span><span>) </span><span style="color:#b48ead;">=&gt;</span><span> [</span><span style="color:#bf616a;">m a</span><span>] </span><span style="color:#b48ead;">-&gt; </span><span style="color:#bf616a;">m</span><span> [</span><span style="color:#bf616a;">a</span><span>]
+</span></code></pre>
+<p>Get it now? <code>sequence</code> takes a list of monads, collects them and returns a monad
+of a list.</p>
+<p>Ok but... what is a monad?</p>
+<p>I'm not going to give a full-blown explanation of what monads are, but, very
+briefly, you can think of them as a kind of <em>box</em> or <em>context</em> containing some
+value of a specific type. For example,
+<code>Maybe</code> is a monad. <code>Maybe a</code> contains a value of type <code>a</code>, where <code>Just a</code> means that the
+value is present and <code>Nothing</code> means it's absent. Let's stick to that and keep
+it simple. (In addition, all monads must implement the <code>&gt;&gt;=</code>, <code>&gt;&gt;</code> and <code>return</code> functions,
+but that's a story for another time).</p>
+<p>So what happens if you apply the <code>sequence</code> function to a list of <code>Maybe a</code>?
+If you have <a href="https://downloads.haskell.org/ghc/latest/docs/html/users_guide/ghci.html">GHCi</a>
+installed, give it a try.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>&gt; sequence [Just 1, Just 2, Just 3]
+</span><span>Just [1, 2, 3]
+</span><span>
+</span><span>&gt; sequence [Just 1, Nothing, Just 2]
+</span><span>Nothing
+</span><span>
+</span><span>&gt; sequence [Just 1, Nothing, Just 2, Nothing]
+</span><span>Nothing
+</span></code></pre>
+<p>How does this happen? If we substitute <code>Maybe Int</code> for <code>m a</code>, the <code>sequence</code>
+function specializes to <code>sequence :: [Maybe Int] -&gt; Maybe [Int]</code>. This means
+that the returned value  is either <code>Just [Int]</code> or <code>Nothing</code>. Specifically, if all
+the members of the list are <code>Just Int</code>, the function will return a <code>Just [Int]</code>. If
+there is a single <code>Nothing</code> in the list, the returned value will be <code>Nothing</code>. This
+seemed like magic to me at first, but we'll take a look at the implementation
+later on.</p>
+<p>In the nucleotide problem, we're not using <code>Maybe a</code> but <code>Either a b</code>. The
+good thing is that <a href="https://hackage.haskell.org/package/base-4.15.0.0/docs/Prelude.html#t:Either"><code>Either a</code> is a monad</a>.
+So what happens if we use, for example, <code>Either Char Int</code> in the <code>sequence</code> function?
+The type signature
+specializes to <code>sequence :: [Either Char Int] -&gt; Either Char [Int]</code>. Let's try this again
+in GHCi.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>&gt; sequence [Right 1, Right 2, Right 3]
+</span><span>Right [1, 2, 3]
+</span><span>
+</span><span>&gt; sequence [Right 1, Left &#39;A&#39;, Right 2, Left &#39;B&#39;]
+</span><span>Left &#39;A&#39;
+</span></code></pre>
+<p>Once again, if there are any <code>Left Char</code>s in the list, the first one is
+returned. Do you see where this is going? In our nucleotide problem, after
+mapping the <code>char2nuc</code> function onto a <code>String</code>, we got a return type of <code>[Either Char Nucleotide]</code>. If we applied the <code>sequence</code> function to this, we would get
+<code>Either Char [Nucleotide]</code>, that would give us either the first invalid
+character or a list of <code>Nucleotide</code>s. Here's a quick example.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>&gt; sequence [Right A, Right A, Right T, Right C, Right G]
+</span><span>Right [A, A, T, C, G]
+</span><span>
+</span><span>&gt; sequence [Right A, Right A, Left &#39;X&#39;, Right C, Left &#39;Y&#39;]
+</span><span>Left &#39;X&#39;
+</span></code></pre>
+<p>So to recap, assume our input string is called <code>dna</code>. We first map <code>char2nuc</code>
+onto <code>dna</code> to obtain something of type <code>[Either Char Nucleotide]</code>. Then we apply
+<code>sequence</code> to this to obtain a value of type <code>Either Char [Nucleotide]</code>. Let's
+call this result <code>nucleotideList</code>.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span>nucleotideList = sequence $ map char2nuc dna
+</span></code></pre>
+<p>Recall that we actually need something of type <code>Either Char (Map Nucleotide Int)</code>,
+so we're not done yet, but we'll get there. Before that, it's worth mentioning
+that there is an easier way to combine <code>map</code> and <code>sequence</code>, which is the
+<a href="https://hackage.haskell.org/package/base-4.15.0.0/docs/Prelude.html#v:mapM"><code>mapM</code></a>
+function.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#8fa1b3;">mapM </span><span style="color:#b48ead;">::</span><span> (</span><span style="color:#b48ead;">Traversable </span><span style="color:#bf616a;">t</span><span>, </span><span style="color:#b48ead;">Monad </span><span style="color:#bf616a;">m</span><span>) </span><span style="color:#b48ead;">=&gt;</span><span> (</span><span style="color:#bf616a;">a </span><span style="color:#b48ead;">-&gt; </span><span style="color:#bf616a;">m b</span><span>) </span><span style="color:#b48ead;">-&gt; </span><span style="color:#bf616a;">t a </span><span style="color:#b48ead;">-&gt; </span><span style="color:#bf616a;">m</span><span> (</span><span style="color:#bf616a;">t b</span><span>)
+</span></code></pre>
+<p>Let's specialize the types for our problem.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#8fa1b3;">mapM </span><span style="color:#b48ead;">::</span><span> (</span><span style="color:#b48ead;">Char -&gt; Either Char Nucleotide</span><span>) </span><span style="color:#b48ead;">-&gt;</span><span> [</span><span style="color:#b48ead;">Char</span><span>] </span><span style="color:#b48ead;">-&gt; Either Char</span><span> [</span><span style="color:#b48ead;">Nucleotide</span><span>]
+</span></code></pre>
+<p>So <code>mapM</code> takes a function of type <code>Char -&gt; Either Char Nucleotide</code> (like
+<code>char2nuc</code>) and a <code>[Char]</code> (or <code>String</code>), maps one onto the other and then
+essentially applies <code>sequence</code> to the result (the
+<a href="https://hackage.haskell.org/package/base-4.15.0.0/docs/src/Data-Traversable.html#mapM">implementation</a>
+is slightly different, but to the same effect). We can use this to simplify our
+transformation of the <code>dna</code> string above.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span>nucleotideList = mapM char2nuc dna
+</span></code></pre>
+<h2 id="final-touches">Final Touches</h2>
+<p>For the final step, we just need to find a way to convert our
+<code>nucleotideList :: Either Char [Nucleotide]</code> into something of type
+<code>Either Char (Map Nucleotide Int)</code>. Let's ignore the <code>Either Char</code> monad
+for a second and think of how to turn a <code>[Nucleotide]</code> into a <code>Map Nucleotide Int</code>. Let's implement a function called <code>count</code> (sorry for the inexpressive name).</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#b48ead;">import </span><span>Data.Map (</span><span style="color:#b48ead;">Map</span><span>, </span><span style="color:#8fa1b3;">fromList</span><span>, </span><span style="color:#8fa1b3;">adjust</span><span>)
+</span><span>
+</span><span>
+</span><span style="color:#8fa1b3;">count </span><span style="color:#b48ead;">::</span><span> [</span><span style="color:#b48ead;">Nucleotide</span><span>] </span><span style="color:#b48ead;">-&gt; Map Nucleotide Int
+</span><span>count = foldr (adjust succ) basemap
+</span><span>    </span><span style="color:#b48ead;">where</span><span> basemap = fromList [(</span><span style="color:#d08770;">A</span><span>, </span><span style="color:#d08770;">0</span><span>), (</span><span style="color:#d08770;">C</span><span>, </span><span style="color:#d08770;">0</span><span>), (</span><span style="color:#d08770;">G</span><span>, </span><span style="color:#d08770;">0</span><span>), (</span><span style="color:#d08770;">T</span><span>, </span><span style="color:#d08770;">0</span><span>)]
+</span></code></pre>
+<p><code>succ</code> here is the same as <code>(+1)</code> and <a href="https://hackage.haskell.org/package/containers-0.6.5.1/docs/Data-Map-Internal.html#v:adjust"><code>adjust</code></a>
+updates a given key in a map by applying <code>succ</code> to it (i.e. increasing the value
+by <code>1</code>). So what happens here is that we start with <code>basemap</code> and, for every
+element of the input list of <code>Nucleotide</code>s, we update <code>basemap</code> with <code>adjust succ</code>, which increases the value of that element in the map by <code>1</code>.</p>
+<p>Now all we need to do is apply the <code>count</code> function to the "content" of
+<code>nucleotideList</code>. This is pretty simple, we can use
+<a href="https://hackage.haskell.org/package/base-4.15.0.0/docs/Prelude.html#v:fmap"><code>fmap</code></a>
+(which is the same as <code>&lt;$&gt;</code>). Recall the type of <code>fmap</code>:</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#8fa1b3;">fmap </span><span style="color:#b48ead;">:: Functor </span><span style="color:#bf616a;">f </span><span style="color:#b48ead;">=&gt;</span><span> (</span><span style="color:#bf616a;">a </span><span style="color:#b48ead;">-&gt; </span><span style="color:#bf616a;">b</span><span>) </span><span style="color:#b48ead;">-&gt; </span><span style="color:#bf616a;">f a </span><span style="color:#b48ead;">-&gt; </span><span style="color:#bf616a;">f b
+</span></code></pre>
+<p>Or, in our case, since <code>Either a</code> is also a <code>Functor</code>:</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#8fa1b3;">fmap </span><span style="color:#b48ead;">::</span><span> ([</span><span style="color:#b48ead;">Nucleotide</span><span>] </span><span style="color:#b48ead;">-&gt; Map Nucleotide Int</span><span>) </span><span style="color:#b48ead;">-&gt; Either Char</span><span> [</span><span style="color:#b48ead;">Nucleotide</span><span>] </span><span style="color:#b48ead;">-&gt;
+</span><span style="color:#d08770;">Either Char</span><span> (</span><span style="color:#d08770;">Map Nucleotide Int</span><span>)
+</span></code></pre>
+<p>So we could implement our top-level function <code>nucleotideCounts</code> like this.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#8fa1b3;">nucleotideCounts </span><span style="color:#b48ead;">:: String -&gt; Either Char</span><span> (</span><span style="color:#b48ead;">Map Nucleotide Int</span><span>)
+</span><span>nucleotideCounts s = count &lt;$&gt; nucleotideList 
+</span><span>	</span><span style="color:#b48ead;">where</span><span> nucleotideList = mapM char2nuc s
+</span></code></pre>
+<p>Here's the full code (skipping the <code>nucleotideList</code> definition)</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#b48ead;">module </span><span>DNA (</span><span style="color:#8fa1b3;">nucleotideCounts</span><span>, </span><span style="color:#b48ead;">Nucleotide</span><span style="color:#8fa1b3;">(..)</span><span>) </span><span style="color:#b48ead;">where
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>Data.Map (</span><span style="color:#b48ead;">Map</span><span>, </span><span style="color:#8fa1b3;">fromList</span><span>, </span><span style="color:#8fa1b3;">adjust</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">data </span><span style="color:#d08770;">Nucleotide </span><span>= </span><span style="color:#d08770;">A </span><span>| </span><span style="color:#d08770;">C </span><span>| </span><span style="color:#d08770;">G </span><span>| </span><span style="color:#d08770;">T </span><span style="color:#b48ead;">deriving</span><span> (</span><span style="color:#a3be8c;">Eq</span><span>, </span><span style="color:#a3be8c;">Ord</span><span>, </span><span style="color:#a3be8c;">Show</span><span>)
+</span><span>
+</span><span style="color:#8fa1b3;">char2nuc </span><span style="color:#b48ead;">:: Char -&gt; Either Char Nucleotide
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">A</span><span>&#39; = </span><span style="color:#d08770;">Right A
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">C</span><span>&#39; = </span><span style="color:#d08770;">Right C
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">G</span><span>&#39; = </span><span style="color:#d08770;">Right G
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">T</span><span>&#39; = </span><span style="color:#d08770;">Right T
+</span><span>char2nuc x = </span><span style="color:#d08770;">Left</span><span> x
+</span><span>
+</span><span style="color:#8fa1b3;">count </span><span style="color:#b48ead;">::</span><span> [</span><span style="color:#b48ead;">Nucleotide</span><span>] </span><span style="color:#b48ead;">-&gt; Map Nucleotide Int
+</span><span>count = foldr (adjust succ) basemap
+</span><span>    </span><span style="color:#b48ead;">where</span><span> basemap = fromList [(</span><span style="color:#d08770;">A</span><span>, </span><span style="color:#d08770;">0</span><span>), (</span><span style="color:#d08770;">C</span><span>, </span><span style="color:#d08770;">0</span><span>), (</span><span style="color:#d08770;">G</span><span>, </span><span style="color:#d08770;">0</span><span>), (</span><span style="color:#d08770;">T</span><span>, </span><span style="color:#d08770;">0</span><span>)]
+</span><span>
+</span><span style="color:#8fa1b3;">nucleotideCounts </span><span style="color:#b48ead;">:: String -&gt; Either Char</span><span> (</span><span style="color:#b48ead;">Map Nucleotide Int</span><span>)
+</span><span>nucleotideCounts s = count &lt;$&gt; mapM char2nuc s
+</span></code></pre>
+<p>Now, you might be wondering: what happens if <code>mapM char2nuc s</code> returns a <code>Left Char</code> and we apply <code>fmap count</code> to that? <code>count</code> doesn't expect a <code>Char</code>! Well,
+applying <code>fmap</code> (or <code>&lt;$&gt;</code>) to <code>Left a</code> is the same as applying <code>fmap</code> to
+<code>Nothing</code>: you get back what you started with. Try it out.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>&gt; fmap (*2) (Right 3)
+</span><span>Right 6
+</span><span>
+</span><span>&gt; fmap (*2) (Left 3)
+</span><span>Left 3
+</span></code></pre>
+<p>This might seem a bit like magic, but it's really just the way that
+<code>Either a</code> implements <code>fmap</code>: the implementation is
+<a href="https://hackage.haskell.org/package/base-4.15.0.0/docs/src/Data-Either.html#Either">here</a>
+(search for <code>fmap</code>).</p>
+<p>As I mentioned in the beginning, this article is the first of a 3-part series.
+In <a href="https://giorgiosav.github.io/blog/simple-haskell-monads-2/">Part 2</a>, I'll try to demystify the magic behind <code>sequence</code> and <code>mapM</code> and in
+<a href="https://giorgiosav.github.io/blog/simple-haskell-monads-3/">Part 3</a> I'll compare solutions to this problem in C++ and Rust.</p>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  WTF is SFINAE?
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+    
+      <a href="&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articles
+      </a>
+    
+      <a href="&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        About
+      </a>
+    
+      <a href="&#x2F;it"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Italiano
+      </a>
+    
+  
+
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  WTF is SFINAE?
+</h1>
+      
+
+
+  
+    
+  
+
+
+      
+
+  
+    <div class="date">2023-05-20</div>
+  
+
+  <p><a href="https://en.cppreference.com/w/cpp/language/sfinae">SFINAE</a> is a Latin word
+derived from the expression <a href="https://en.wikipedia.org/wiki/Homo_faber"><em>homo faber suae quisque
+sfinae</em></a>.</p>
+<p>I'm just kidding: it's an acronym that
+stands for the uninformative sentence <em>Substitution Failure Is Not An Error</em>.
+Let's take a quick look at what this means.</p>
+<h2 id="swaseinabt">SWASEINABT</h2>
+<p><em>(Starting With A Simple Example Is Not A Bad Thing)</em></p>
+<p>Try to guess what the example below does.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">stdexcept</span><span>&gt;
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">iostream</span><span>&gt;
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">vector</span><span>&gt;
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">list</span><span>&gt;
+</span><span>
+</span><span style="color:#b48ead;">using namespace</span><span> std; </span><span style="color:#65737e;">// On small examples, your sins are forgiven
+</span><span>
+</span><span style="color:#65737e;">// alias for &quot;return type of T[n]&quot;
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> T&gt;
+</span><span style="color:#b48ead;">using </span><span>access_t = </span><span style="color:#b48ead;">decltype</span><span>(T::</span><span style="color:#b48ead;">operator</span><span>[](</span><span style="color:#bf616a;">declval</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> T::value_type&gt;()));
+</span><span>
+</span><span style="color:#65737e;">// use this if T[n] is a valid expression...
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> T, </span><span style="color:#b48ead;">typename </span><span>= access_t&lt;T&gt;&gt;
+</span><span style="color:#b48ead;">typename</span><span> T::value_type </span><span style="color:#8fa1b3;">at</span><span>(</span><span style="color:#b48ead;">const</span><span> T&amp; </span><span style="color:#bf616a;">container</span><span>, size_t </span><span style="color:#bf616a;">n</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">return</span><span> container[n];
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// ...otherwise, use this
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> T&gt;
+</span><span style="color:#b48ead;">typename</span><span> T::value_type </span><span style="color:#8fa1b3;">at</span><span>(</span><span style="color:#b48ead;">const</span><span> T&amp; </span><span style="color:#bf616a;">container</span><span>, size_t </span><span style="color:#bf616a;">n</span><span>) {
+</span><span>    size_t i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">for</span><span>(</span><span style="color:#b48ead;">auto</span><span> it = container.</span><span style="color:#bf616a;">begin</span><span>(); it != container.</span><span style="color:#bf616a;">end</span><span>(); ++it) {
+</span><span>        </span><span style="color:#b48ead;">if </span><span>(i == n) </span><span style="color:#b48ead;">return </span><span>*it;
+</span><span>        ++i;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">throw </span><span style="color:#bf616a;">runtime_error</span><span>(&quot;</span><span style="color:#a3be8c;">Out of bounds</span><span>&quot;);
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>    vector&lt;</span><span style="color:#b48ead;">int</span><span>&gt; </span><span style="color:#bf616a;">a </span><span>{</span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">3</span><span>, </span><span style="color:#d08770;">5</span><span>, </span><span style="color:#d08770;">9</span><span>, </span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">6</span><span>};
+</span><span>    list&lt;</span><span style="color:#b48ead;">int</span><span>&gt; </span><span style="color:#bf616a;">b </span><span>{</span><span style="color:#d08770;">1</span><span>, </span><span style="color:#d08770;">4</span><span>, </span><span style="color:#d08770;">0</span><span>, </span><span style="color:#d08770;">8</span><span>, </span><span style="color:#d08770;">7</span><span>};
+</span><span>
+</span><span>    cout &lt;&lt; &quot;</span><span style="color:#a3be8c;">a[4] == </span><span>&quot; &lt;&lt; </span><span style="color:#bf616a;">at</span><span>(a, </span><span style="color:#d08770;">4</span><span>)
+</span><span>         &lt;&lt; &quot;</span><span style="color:#96b5b4;">\n</span><span style="color:#a3be8c;">b[2] == </span><span>&quot; &lt;&lt; </span><span style="color:#bf616a;">at</span><span>(b, </span><span style="color:#d08770;">2</span><span>) &lt;&lt; endl;
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// Output:
+</span><span>    </span><span style="color:#65737e;">// a[4] == 1
+</span><span>    </span><span style="color:#65737e;">// b[2] == 0
+</span><span>}
+</span></code></pre>
+<p>This code snippet is defining the function <code>at(container, n)</code>,
+which returns the <code>n</code>-th element of <code>container</code>. If the container supports
+indexing with the <code>[]</code> operator, it uses the first version of <code>at</code>. Otherwise,
+it uses the second version. In C++, <code>vector</code>s support <code>[]</code>, but <code>list</code>s don't,
+so we should see both functions being used here.</p>
+<p>Let's walk through the tricky bits:</p>
+<ul>
+<li>
+<p>The <code>using</code> declaration at the beginning defines a "metafunction", which in
+this case is really just an alias for the return type of <code>T::operator[]</code>.
+<a href="https://en.cppreference.com/w/cpp/utility/declval"><code>declval</code></a>
+is a sort of dummy value, used to evaluate what type
+<code>T::operator[]</code> will return. <a href="https://en.cppreference.com/w/cpp/language/decltype"><code>decltype</code></a>
+evaluates the compile-time type of the expression.</p>
+</li>
+<li>
+<p>The signature starting with <code>template&lt;typename T, typename = access_t&lt;T&gt;&gt;</code>
+looks strange: why is there a default, unnamed parameter? This
+is really the essence of SFINAE: <code>access_t&lt;T&gt;</code> needs to be well-defined, and
+this will only be the case if the type <code>T</code> has an <code>operator[]</code> function. If it
+doesn't, then <em>Substitution Failure</em> will occurr, however this <em>Is Not An
+Error</em>, because there is another <code>at</code> function which is well-defined and can
+be used instead.</p>
+</li>
+</ul>
+<p>In C++20 you no longer need the hack with <code>access_t&lt;T&gt;</code>: you can use concepts
+and contraints to the same effect.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> T&gt;
+</span><span>concept Indexable = </span><span style="color:#bf616a;">requires</span><span>(T t) {
+</span><span>    T::</span><span style="color:#b48ead;">operator</span><span>[];
+</span><span>};
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;Indexable T&gt;
+</span><span style="color:#b48ead;">typename</span><span> T::value_type </span><span style="color:#8fa1b3;">at</span><span>(</span><span style="color:#b48ead;">const</span><span> T&amp; </span><span style="color:#bf616a;">container</span><span>, size_t </span><span style="color:#bf616a;">n</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">return</span><span> container[n];
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> T&gt;
+</span><span style="color:#b48ead;">typename</span><span> T::value_type </span><span style="color:#8fa1b3;">at</span><span>(</span><span style="color:#b48ead;">const</span><span> T&amp; </span><span style="color:#bf616a;">container</span><span>, size_t </span><span style="color:#bf616a;">n</span><span>) {
+</span><span>    size_t i = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">for</span><span>(</span><span style="color:#b48ead;">auto</span><span> it = container.</span><span style="color:#bf616a;">begin</span><span>(); it != container.</span><span style="color:#bf616a;">end</span><span>(); ++it) {
+</span><span>        </span><span style="color:#b48ead;">if </span><span>(i == n) </span><span style="color:#b48ead;">return </span><span>*it;
+</span><span>        ++i;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">throw </span><span style="color:#bf616a;">runtime_error</span><span>(&quot;</span><span style="color:#a3be8c;">Out of bounds</span><span>&quot;);
+</span><span>}
+</span></code></pre>
+<p>That's the essence of it. Of course, there is a lot more to SFINAE, from <code>void_t</code> to <code>enable_if</code>, to
+this abstruse example from cppreference.com:</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">int</span><span> I&gt;
+</span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">div</span><span>(</span><span style="color:#b48ead;">char</span><span>(*)[I % </span><span style="color:#d08770;">2 </span><span>== </span><span style="color:#d08770;">0</span><span>] = </span><span style="color:#d08770;">nullptr</span><span>)
+</span><span>{
+</span><span>    </span><span style="color:#65737e;">// this overload is selected when I is even
+</span><span>}
+</span><span> 
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">int</span><span> I&gt;
+</span><span style="color:#b48ead;">void </span><span style="color:#8fa1b3;">div</span><span>(</span><span style="color:#b48ead;">char</span><span>(*)[I % </span><span style="color:#d08770;">2 </span><span>== </span><span style="color:#d08770;">1</span><span>] = </span><span style="color:#d08770;">nullptr</span><span>)
+</span><span>{
+</span><span>    </span><span style="color:#65737e;">// this overload is selected when I is odd
+</span><span>}
+</span></code></pre>
+<p>In fact, I wanted to write a much longer article about SFINAE "from first principles", but
+then realized that
+it was slowly turning into a full-blown primer on template metaprogramming that I didn't have
+time to write. If you're interested, here's some further reading material.</p>
+<h2 id="further-reading">Further reading</h2>
+<ul>
+<li><a href="https://www.cppstories.com/2016/02/notes-on-c-sfinae/">https://www.cppstories.com/2016/02/notes-on-c-sfinae/</a></li>
+<li><a href="https://github.com/Pharap/CppExplanations/blob/master/SFINAE.md">https://github.com/Pharap/CppExplanations/blob/master/SFINAE.md</a></li>
+<li><a href="https://en.cppreference.com/w/cpp/language/sfinae">https://en.cppreference.com/w/cpp/language/sfinae</a></li>
+<li><a href="https://en.cppreference.com/w/cpp/types/void_t">https://en.cppreference.com/w/cpp/types/void_t</a></li>
+<li><a href="https://en.cppreference.com/w/cpp/types/enable_if">https://en.cppreference.com/w/cpp/types/enable_if</a></li>
+<li><a href="https://en.cppreference.com/w/cpp/language/constraints">https://en.cppreference.com/w/cpp/language/constraints</a></li>
+</ul>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>

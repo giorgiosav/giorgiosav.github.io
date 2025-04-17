@@ -1,0 +1,350 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  Potenze e moduli
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+
+  
+    
+      <a href="&#x2F;it&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articoli
+      </a>
+    
+      <a href="&#x2F;it&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Info
+      </a>
+    
+      <a href="&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        English
+      </a>
+    
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  Potenze e moduli
+</h1>
+      
+
+
+  
+    
+      <div id="translation-wrapper">
+        <a id="translation" href = "https:&#x2F;&#x2F;giorgiosav.github.io&#x2F;blog&#x2F;mod-exp&#x2F;">
+          
+            Read in English
+          
+        </a>
+      </div>
+    
+  
+    
+  
+
+
+      
+
+  
+    <div class="date">2022-10-16</div>
+  
+
+  <p>Ci sono <a href="https://it.wikipedia.org/wiki/Test_di_Fermat">vari</a>
+<a href="https://it.wikipedia.org/wiki/Test_di_Miller-Rabin">algoritmi</a>, perlopiù
+nell'ambito della crittografia, che richiedono di calcolare delle potenze in
+aritmetica modulare. Senza entrare troppo nel contesto, prendiamo subito un
+esempio: per due interi positivi <em>a</em> e <em>p</em> piuttosto grandi, vogliamo calcolare il modulo
+seguente, con dei numeri a 32 bit (<code>uint32_t</code>).</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mi>a</mi>
+          <mi>p</mi>
+        </msup>
+        <mspace width="5px"/>
+        <ms>mod</ms>
+        <mspace width="5px"/>
+        <mi>p</mi>
+      </mrow>
+      <annotation>
+        a^p \mod p
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<p>Facciamo finta che 53 e 91 siano numeri grandi, per cui vogliamo calcolare</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mi>53</mi>
+          <mi>91</mi>
+        </msup>
+        <mspace width="5px"/>
+        <ms>mod</ms>
+        <mspace width="5px"/>
+        <mi>91</mi>
+      </mrow>
+      <annotation>
+        53^{91} \mod 91
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<br>
+<span class="math-inline">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mi>53</mi>
+          <mi>91</mi>
+        </msup>
+      </mrow>
+      <annotation>
+        53^{91} \mod 91
+      </annotation>
+    </semantics>
+  </math>
+</span>
+è un numero astronomico, che richiederebbe oltre 500 bit per essere
+rappresentato, per cui bisogna trovare un modo indiretto per ottenerne il
+valore modulo 91.
+Il primo
+algoritmo che potrebbe venire a mente è questo, che esegue delle
+moltiplicazioni consecutive e ne prende il modulo ad ogni iterazione.
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#65737e;">// supponiamo mod &gt; 1, tralasciamo 0^0
+</span><span>uint32_t </span><span style="color:#8fa1b3;">potenza_modulo</span><span>(uint32_t </span><span style="color:#bf616a;">base</span><span>, uint32_t </span><span style="color:#bf616a;">esp</span><span>, uint32_t </span><span style="color:#bf616a;">mod</span><span>) {
+</span><span>    base %= mod;
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(base == </span><span style="color:#d08770;">0</span><span>) </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span>    uint32_t risultato = </span><span style="color:#d08770;">1</span><span>;
+</span><span>    </span><span style="color:#b48ead;">for </span><span>(uint32_t i = </span><span style="color:#d08770;">0</span><span>; i &lt; esp; ++i) {
+</span><span>        risultato = (risultato * base) % mod;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">return</span><span> risultato;
+</span><span>}
+</span></code></pre>
+<p>Qui bisogna tenere a mente che <code>risultato * base</code> potrebbe non entrare in 32
+bit. Siccome sia <code>risultato</code> che <code>base</code> possono essere al massimo <code>mod - 1</code>,
+basta verificare all'inizio che <code>(mod - 1) * (mod - 1)</code> sia rappresentabile.</p>
+<p>Ma non esiste un algoritmo più efficiente? Sì: su
+<a href="https://en.wikipedia.org/wiki/Modular_exponentiation#Pseudocode">questa pagina</a>
+trovate dello pseudocodice, ma proverò a spiegarlo qui sotto.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span>uint32_t </span><span style="color:#8fa1b3;">potenza_modulo</span><span>(uint32_t </span><span style="color:#bf616a;">base</span><span>, uint32_t </span><span style="color:#bf616a;">esp</span><span>, uint32_t </span><span style="color:#bf616a;">mod</span><span>) {
+</span><span>
+</span><span>    base %= mod;
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(base == </span><span style="color:#d08770;">0</span><span>) </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span>    uint32_t risultato = </span><span style="color:#d08770;">1</span><span>;
+</span><span>    </span><span style="color:#b48ead;">while </span><span>(</span><span style="color:#d08770;">true</span><span>) {
+</span><span>        </span><span style="color:#b48ead;">if </span><span>(esp &amp; </span><span style="color:#d08770;">1</span><span>) risultato = (risultato * base) % mod;
+</span><span>        esp &gt;&gt;= </span><span style="color:#d08770;">1</span><span>;
+</span><span>        </span><span style="color:#b48ead;">if </span><span>(esp == </span><span style="color:#d08770;">0</span><span>) </span><span style="color:#b48ead;">break</span><span>;
+</span><span>        base = (base * base) % mod;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">return</span><span> risultato;
+</span><span>}
+</span></code></pre>
+<p>Il trucco sta nel convertire l'esponente (91) in binario (<code>1011011</code>):</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <mn>91</mn>
+        <mo>=</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>6</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>4</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>3</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>1</mn>
+        </msup>
+        <mo>+</mo>
+        <msup>
+          <mn>2</mn>
+          <mn>0</mn>
+        </msup>
+      </mrow>
+      <annotation>
+        91 = 2^6 + 2^4 + 2^3 + 2^1 + 2^0
+      </annotation>
+  </semantics>
+  </math>
+</span>
+<br>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <ms>&rArr;</ms>
+        <mspace width="10px"/>
+        <msup>
+          <mn>53</mn>
+          <mn>91</mn>
+        </msup>
+        <mo>=</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>6</mn>
+          </msup>
+        </msup>
+        <mo>&middot;</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>4</mn>
+          </msup>
+        </msup>
+        <mo>&middot;</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>3</mn>
+          </msup>
+        </msup>
+        <mo>&middot;</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>1</mn>
+          </msup>
+        </msup>
+        <mo>&middot;</mo>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>0</mn>
+          </msup>
+        </msup>
+      </mrow>
+      <annotation>
+        53^{91} = 53^{2^6} + 53^{2^4} + 53^{2^3} + 53^{2^1} + 53^{2^0}
+      </annotation>
+  </semantics>
+  </math>
+</span>
+<p>Possiamo quindi accumulare il risultato moltiplicandolo per il valore
+corrispondente ad ogni bit <code>1</code> dell'esponente, saltando gli zeri. Guardiamo meglio il contenuto
+del ciclo <code>while</code>:</p>
+<ul>
+<li><code>if (esp &amp; 1)</code>: se l'esponente è dispari, moltiplichiamo il risultato per la
+base, ricordando che <code>a * b % p == (a % p) * (b % p)</code>, quindi possiamo
+prendere il modulo quando vogliamo in sostanza.</li>
+<li><code>esp &gt;&gt;= 1</code>: passiamo al bit successivo dell'esponente.</li>
+<li><code>base = (base * base) % mod</code>: il bit successivo corrisponde al quadrato della
+base attuale. Per esempio, il quinto bit corrisponde a:</li>
+</ul>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mn>53</mn>
+          <msup>
+            <mn>2</mn>
+            <mn>4</mn>
+          </msup>
+        </msup>
+        <mo>=</mo>
+        <msup>
+          <mn>53</mn>
+          <mrow>
+            <mn>2</mn>
+            <mo>&middot;</mo>
+            <msup><mn>2</mn><mn>3</mn></msup>
+          </mrow>
+        </msup>
+        <mo>=</mo>
+        <msup>
+          <mrow>
+            <mo>(</mo>
+            <msup>
+              <mn>53</mn>
+              <msup>
+                <mn>2</mn>
+                <mn>3</mn>
+              </msup>
+            </msup>
+            <mo>)</mo>
+          </mrow>
+          <mn>2</mn>
+        </msup>
+      </mrow>
+      <annotation>
+        53^{2^4} = 53 ^ {2 \cdot 2^3} = \left( 53^{2^3} \right)^2
+      </annotation>
+  </semantics>
+  </math>
+</span>
+<p>Tutto qua! Il primo algoritmo è <code>O(esp)</code>, mentre il secondo è
+<code>O(log(esp))</code>, quindi decisamente più efficiente.</p>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>

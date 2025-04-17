@@ -1,0 +1,615 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  Fun with roots
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+    
+      <a href="&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articles
+      </a>
+    
+      <a href="&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        About
+      </a>
+    
+      <a href="&#x2F;it"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Italiano
+      </a>
+    
+  
+
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  Fun with roots
+</h1>
+      
+
+
+  
+    
+  
+
+
+      
+
+  
+    <div class="date">2022-11-13</div>
+  
+
+  <p>The <a href="https://en.cppreference.com/w/cpp/numeric/math/sqrt"><code>sqrt</code> function</a> from
+<code>math.h</code> that is used in C and C++ standard libraries doesn't have an
+"integer-only" version. In other words, there is no function with this
+signature:</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">sqrt</span><span>(</span><span style="color:#b48ead;">int </span><span style="color:#bf616a;">arg</span><span>);
+</span></code></pre>
+<p>So a few weeks ago I thought: let's try to implement one and see if it's any
+faster than using the floating-point <code>sqrt</code> function and casting the result to
+an <code>int</code>. Actually, since we don't need negative numbers in this case, I'll be
+using <code>uint32_t</code> instead of <code>int</code>.</p>
+<p>(While writing this article, I came across <a href="https://en.wikipedia.org/wiki/Integer_square_root#Basic_algorithms">this Wikipedia
+page</a> which
+contains a lot of useful information, I'm adding it here for reference).</p>
+<h2 id="the-infamous-naive-implementation">The infamous "naive implementation"</h2>
+<p>The most naive implementation I can think of is to simply test every integer
+starting from zero. This would have a runtime of
+<span class="math-inline">
+<math>
+<semantics>
+<mrow>
+<mi>O</mi>
+<mo>(</mo>
+<msqrt><mi>n</mi></msqrt>
+<mo>)</mo>
+</mrow>
+<annotation>
+O\left(\sqrt{n}\right)
+</annotation>
+</semantics>
+</math>
+</span>
+, since we can stop once we find the answer.</p>
+<p>To spice it up a little, the code below does 2 interesting things.
+The first is that it treats any number greater than
+<span class="math-inline">
+<math>
+<semantics>
+<mrow>
+<msup>
+<mn>2</mn>
+<mn>16</mn>
+</msup>
+<mo>-</mo>
+<mn>1</mn>
+</mrow>
+<annotation>
+2^{16} - 1
+</annotation>
+</semantics>
+</math>
+</span>
+(<code>0x0000FFFF</code>) as an edge case, since its square would overflow a <code>uint32_t</code>.
+The second is that it avoids multiplications
+by using the fact that integer squares are sums of consecutive odd numbers:
+<span class="math-inline">
+<math>
+<semantics>
+<mrow>
+<msup>
+<mi>m</mi>
+<mn>2</mn>
+</msup>
+<mo>=</mo>
+<mn>1</mn>
+<mo>+</mo>
+<mn>3</mn>
+<mo>+</mo>
+<mn>5</mn>
+<mo>+</mo>
+<mn>⋯</mn>
+<mo>+</mo>
+<mn>2</mn>
+<mi>m</mi>
+<mo>-</mo>
+<mn>1</mn>
+</mrow>
+<annotation>
+m^2 = 1 + 3 + 5 + \cdots + 2m - 1
+</annotation>
+</semantics>
+</math>
+</span>
+.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span>uint32_t </span><span style="color:#8fa1b3;">naive_sqrt</span><span>(uint32_t </span><span style="color:#bf616a;">n</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">constexpr </span><span>uint32_t MAX_ROOT = </span><span style="color:#d08770;">0x0000FFFF</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(n &gt;= MAX_ROOT * MAX_ROOT) </span><span style="color:#b48ead;">return</span><span> MAX_ROOT;
+</span><span>
+</span><span>    uint32_t base = </span><span style="color:#d08770;">0</span><span>;
+</span><span>    uint32_t next_square = </span><span style="color:#d08770;">1</span><span>;
+</span><span>    uint32_t diff = </span><span style="color:#d08770;">3</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">while </span><span>(next_square &lt;= n) {
+</span><span>        next_square += diff;
+</span><span>        diff += </span><span style="color:#d08770;">2</span><span>;
+</span><span>        ++base;
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">return</span><span> base;
+</span><span>}
+</span></code></pre>
+<h2 id="binary-search">Binary search</h2>
+<p>The naive case above is basically a linear search. Given that numbers are sorted
+by nature, we can use binary search to bring the runtime down to
+<span class="math-inline">
+<math>
+<semantics>
+<mrow>
+<mi>O</mi>
+<mo>(</mo>
+<ms>log</ms><mspace width="5px"/><mi>n</mi>
+<mo>)</mo>
+</mrow>
+<annotation>
+O\left(\log{n}\right)
+</annotation>
+</semantics>
+</math>
+</span>
+.
+Here's my implementation.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#65737e;">// Implementation of integer sqrt with binary search
+</span><span>uint32_t </span><span style="color:#8fa1b3;">binary_search_sqrt</span><span>(uint32_t </span><span style="color:#bf616a;">n</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(n == </span><span style="color:#d08770;">0</span><span>) </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">0</span><span>;
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(n &lt; </span><span style="color:#d08770;">4</span><span>) </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1</span><span>;
+</span><span>
+</span><span>    uint32_t lo = </span><span style="color:#d08770;">1</span><span>;
+</span><span>    uint32_t hi = n;
+</span><span>    uint32_t result = </span><span style="color:#d08770;">0</span><span>;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">while</span><span>(lo &lt;= hi) {
+</span><span>        uint32_t mid = (lo + hi) / </span><span style="color:#d08770;">2</span><span>;
+</span><span>        uint32_t inverse = n / mid;
+</span><span>        </span><span style="color:#b48ead;">if </span><span>(inverse == mid) {
+</span><span>            </span><span style="color:#b48ead;">return</span><span> mid;
+</span><span>        }
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">if </span><span>(mid &lt; inverse) {
+</span><span>            lo = mid + </span><span style="color:#d08770;">1</span><span>;
+</span><span>            result = mid;
+</span><span>        } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>            hi = mid - </span><span style="color:#d08770;">1</span><span>;
+</span><span>        }
+</span><span>    }
+</span><span>    </span><span style="color:#b48ead;">return</span><span> result;
+</span><span>}
+</span></code></pre>
+<p>This is your typical binary search algorithm: split the number line between <code>0</code>
+and <code>n</code> into 2 parts and recurse on the left if the middle number is too large,
+or on the right if it is too small.</p>
+<h2 id="newton-s-method">Newton's Method</h2>
+<p><a href="https://en.wikipedia.org/wiki/Newton&#x27;s_method">Newton's method</a> is a successive
+approximation method that is widely used in simulation software to solve
+equations. It works by making an initial guess and iteratively refining it with
+first-order approximations, until a close enough answer is obtained.</p>
+<p>(On a sidenote, <a href="https://www.youtube.com/watch?v=-RdOwhmqP5s">this video</a> is
+very interesting and links Newton's method to fractals).</p>
+<p>With Newton's method, we can approximately solve a generic equation of the form
+<span class="math-inline">
+<math>
+<semantics>
+<mrow>
+<mi>f</mi>
+<mo>(</mo>
+<mi>x</mi>
+<mo>)</mo>
+<mo>=</mo>
+<mn>0</mn>
+</mrow>
+<annotation>
+f(x) = 0
+</annotation>
+</semantics>
+</math>
+</span>
+. We start with an initial guess for the solution,
+<span class="math-inline">
+<math>
+<semantics>
+<mrow>
+<msub><mi>x</mi><mn>0</mn></msub>
+</mrow>
+<annotation>
+x_0
+</annotation>
+</semantics>
+</math>
+</span>
+, and iteratively refine it.
+<span class="math-inline">
+<math>
+<semantics>
+<mrow>
+<msub><mi>x</mi><mi>k</mi></msub>
+</mrow>
+<annotation>
+x_k
+</annotation>
+</semantics>
+</math>
+</span>
+is our approximation after <em>k</em> iterations. The formula for Newton's method
+states:</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msub>
+          <mi>x</mi>
+          <mrow>
+            <mi>k</mi>
+            <mo>+</mo>
+            <mn>1</mn>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <msub>
+          <mi>x</mi>
+          <mi>k</mi>
+        </msub>
+        <mo>-</mo>
+        <mfrac>
+          <mrow>
+            <mi>f</mi>
+            <mo>(</mo>
+            <msub>
+              <mi>x</mi>
+              <mi>k</mi>
+            </msub>
+            <mo>)</mo>
+          </mrow>
+          <mrow>
+            <msup>
+              <mi>f</mi>
+              <mo>&prime;</mo>
+            </msup>
+            <mo>(</mo>
+            <msub>
+              <mi>x</mi>
+              <mi>k</mi>
+            </msub>
+            <mo>)</mo>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <annotation>
+        x_{k+1} = x_k - \frac{f\left(x_k\right)}{f\prime\left(x_k\right)}
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<p>In our case, computing the square root of <code>n</code> is equivalent to solving the equation</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>-</mo>
+        <mi>n</mi>
+        <mo>=</mo>
+        <mn>0</mn>
+      </mrow>
+      <annotation>
+        x^2 - n = 0
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<p>If we plug this into the definition above:</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msub>
+          <mi>x</mi>
+          <mrow>
+            <mi>k</mi>
+            <mo>+</mo>
+            <mn>1</mn>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <msub>
+          <mi>x</mi>
+          <mi>k</mi>
+        </msub>
+        <mo>-</mo>
+        <mfrac>
+          <mrow>
+            <msubsup>
+              <mi>x</mi>
+              <mi>k</mi>
+              <mn>2</mn>
+            </msubsup>
+            <mo>-</mo>
+            <mi>n</mi>
+          </mrow>
+          <mrow>
+            <mn>2</mn>
+            <msub><mi>x</mi><mi>k</mi></msub>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <annotation>
+        x_{k+1} = x_k - \frac{x_k^2 - n}{2x_k}
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<br>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <mo>&rArr;</mo>
+        <msub>
+          <mi>x</mi>
+          <mrow>
+            <mi>k</mi>
+            <mo>+</mo>
+            <mn>1</mn>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <mfrac><mn>1</mn><mn>2</mn></mfrac>
+        <mo>(</mo>
+        <msub><mi>x</mi><mi>k</mi></msub>
+        <mo>+</mo>
+        <mfrac>
+          <mi>n</mi>
+          <msub>
+            <mi>x</mi>
+            <mi>k</mi>
+          </msub>
+        </mfrac>
+        <mo>)</mo>
+      </mrow>
+      <annotation>
+        \Rightarrow x_{k+1} = \frac{1}{2}\left(x_k + \frac{n}{x_k}\right)
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<p>And here's the code.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#65737e;">// Integer square root using Newton&#39;s method
+</span><span>uint32_t </span><span style="color:#8fa1b3;">newton_sqrt</span><span>(uint32_t </span><span style="color:#bf616a;">n</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(n &lt;= </span><span style="color:#d08770;">1</span><span>) </span><span style="color:#b48ead;">return</span><span> n;
+</span><span>
+</span><span>    uint32_t x0 = </span><span style="color:#d08770;">1 </span><span>&lt;&lt; </span><span style="color:#d08770;">16</span><span>; </span><span style="color:#65737e;">// initial guess
+</span><span>    uint32_t x1;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">while </span><span>(</span><span style="color:#d08770;">true</span><span>) {
+</span><span>        x1 = (x0 + n/x0) / </span><span style="color:#d08770;">2</span><span>;
+</span><span>        </span><span style="color:#b48ead;">if </span><span>(x1 &gt;= x0) { </span><span style="color:#65737e;">// stopping condition
+</span><span>            </span><span style="color:#b48ead;">return</span><span> x0;
+</span><span>        }
+</span><span>        x0 = x1;
+</span><span>    }
+</span><span>}
+</span></code></pre>
+<p>The stopping condition is usually based on the difference between two
+consecutive iterations. With floating point numbers, it can be any arbitrarily
+small number, but with integers we can stop when <code>x1 &gt;= x0</code>. Intuitively, this
+works because <code>x0</code> is definitely larger than the correct value and at each
+iteration our result gets a little bit closer.</p>
+<h2 id="benchmarks">Benchmarks</h2>
+<p>Which of these do you think is faster?</p>
+<ul>
+<li>Casting to a <code>double</code>, using the in-built <code>sqrt</code> function and casting back to an
+integer.</li>
+<li>Linear Search</li>
+<li>Binary Search</li>
+<li>Newton's Method</li>
+</ul>
+<p>I ran a quick benchmark by computing <code>1 &lt;&lt; 20</code> (about a million) random roots with
+each algorithm and averaging out the time. Here are the results on my machine.</p>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Time</th>
+    </tr>
+    <tr>
+        <td>Built-in</td>
+        <td>35 ns</td>
+    </tr>
+    <tr>
+        <td>Linear Search</td>
+        <td>73 ms</td>
+    </tr>
+    <tr>
+        <td>Binary search</td>
+        <td>308 ns</td>
+    </tr>
+    <tr>
+        <td>Newton's Method</td>
+        <td>96 ns</td>
+    </tr>
+</table>
+<p>Well... the built-in method wins by far. I guess these simple implementations can't
+compete with the fine-tuned C library functions!</p>
+<h2 id="bonus">Bonus</h2>
+<p>What about cube roots, or higher?</p>
+<p>You can of course use the <code>pow</code> function to compute any power (or root) that you
+like, but can we use Newton's Method to find a simple integer implementation?</p>
+<p>We're trying to solve this equation:</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msup>
+          <mi>x</mi>
+          <mi>r</mi>
+        </msup>
+        <mo>-</mo>
+        <mi>n</mi>
+        <mo>=</mo>
+        <mn>0</mn>
+      </mrow>
+      <annotation>
+        x^r - n = 0
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<p>If we plug that into Newton's Method, we get:</p>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <msub>
+          <mi>x</mi>
+          <mrow>
+            <mi>k</mi>
+            <mo>+</mo>
+            <mn>1</mn>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <msub>
+          <mi>x</mi>
+          <mi>k</mi>
+        </msub>
+        <mo>-</mo>
+        <mfrac>
+          <mrow>
+            <msubsup>
+              <mi>x</mi>
+              <mi>k</mi>
+              <mi>r</mi>
+            </msubsup>
+            <mo>-</mo>
+            <mi>n</mi>
+          </mrow>
+          <mrow>
+            <mi>r</mi>
+            <msubsup>
+              <mi>x</mi>
+              <mi>k</mi>
+              <mrow>
+                <mi>r</mi>
+                <mo>-</mo>
+                <mn>1</mn>
+              </mrow>
+            </msubsup>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <annotation>
+        x_{k+1} = x_k - \frac{x_k^r - n}{rx_k^{r-1}}
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<br>
+<span class="math-center">
+  <math>
+    <semantics>
+      <mrow>
+        <mo>&rArr;</mo>
+        <msub>
+          <mi>x</mi>
+          <mrow>
+            <mi>k</mi>
+            <mo>+</mo>
+            <mn>1</mn>
+          </mrow>
+        </msub>
+        <mo>=</mo>
+        <mfrac><mn>1</mn><mi>r</mi></mfrac>
+        <mo>(</mo>
+        <mrow>
+          <mo>(</mo>
+          <mi>r</mi>
+          <mo>-</mo>
+          <mn>1</mn>
+          <mo>)</mo>
+        </mrow>
+        <msub><mi>x</mi><mi>k</mi></msub>
+        <mo>+</mo>
+        <mfrac>
+          <mi>n</mi>
+          <msubsup>
+            <mi>x</mi>
+            <mi>k</mi>
+            <mrow>
+              <mi>r</mi>
+              <mo>-</mo>
+              <mn>1</mn>
+            </mrow>
+          </msubsup>
+        </mfrac>
+        <mo>)</mo>
+      </mrow>
+      <annotation>
+        \Rightarrow x_{k+1} = \frac{1}{r}\left((r-1)x_k + \frac{n}{x_k^{r-1}}\right)
+      </annotation>
+    </semantics>
+  </math>
+</span>
+<p>It should be simple to substitute this in the code for the square root, but I
+haven't tried this yet. I'll update the article if I get around to doing it.</p>
+<p>If you want to read more on these topics, I would recommend starting from <a href="https://en.wikipedia.org/wiki/Integer_square_root">this
+Wikipedia page</a> and <a href="https://stackoverflow.com/questions/4541130/definitions-of-sqrt-sin-cos-pow-etc-in-cmath">this
+StackOverflow
+answer</a>.</p>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>

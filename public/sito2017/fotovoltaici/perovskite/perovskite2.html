@@ -1,0 +1,456 @@
+<!DOCTYPE HTML>
+<html lang = "it">
+
+    <head>
+        <title> Appunti di Elettronica </title>
+        <base href="../../">
+        <link href="style.css" rel="stylesheet">
+        <link href="article_style.css" rel="stylesheet">
+        <link href="fotovoltaici/perovskite/perovskite_style.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="cel-style.css" media = "screen and (max-width:490px)">
+        <link rel="icon" href ="img/logo.png">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+    </head>
+
+    <body>
+
+        <script type = "text/javascript" src = "navbar.js"></script>
+        <script> document.write(navigation(3)); </script>
+        <noscript>
+            <div id="js-warning">
+                Purtroppo questo sito richiede JavaScript
+            </div>
+        </noscript>
+
+        <div id = "page-content-wrapper">
+
+            <div id = "header">
+                <h1 id = "article-title"> Perovskiti II: Riflettanza e Microscopi</h1>
+            </div>
+
+            <div id = "publication-date">
+                <hr>
+                30 Giugno 2017
+            </div>
+
+            <div id = "article">
+                <h2>Premessa</h2>
+
+                <p>
+                    Questo articolo è il secondo della mia serie sulle perovskiti.
+                    Il primo, che dà un'introduzione generale e parla di ellissometria,
+                    si può trovare <a href="fotovoltaici/perovskite/perovskite.html" target="_blank">
+                    qui</a>.
+                </p>
+
+                <p>
+                    Come menzionato alla fine dell'ultimo articolo, una volta
+                    ottenuti dei risultati attraverso l'ellissometria, era necessario
+                    confermarli attraverso altri metodi. Nel nostro caso, usammo
+                    delle misurazioni di <b>riflettanza e trasmittanza</b> ed analizzammo
+                    i nostri campioni con un <b>microscopio elettronico a scansione</b> (SEM)
+                    ed un <b>microscopio a forza atomica</b> (AFM).
+                </p>
+
+                <h2>Riflettanza e Trasmittanza</h2>
+
+                <div class="captioned-img-wrapper full-img" style = "width: 80%">
+                    <img src = "fotovoltaici/perovskite/img/RT.png">
+                    <div class="img-caption">
+                        Tecniche per la misurazione di riflettanza (sinistra)
+                        e trasmittanza (destra).
+                    </div>
+                </div>
+
+                <p>
+                    La riflettanza (<span class = "math">R</span>) e
+                    la trasmittanza (<span class = "math">T</span>) sono una misura dell'<b>intensità</b>
+                    di luce che viene riflessa e trasmessa rispettivamente da un campione.
+                    Come mostra lo schema qui sopra, sono delle misurazioni abbastanza
+                    semplici che, se condotte correttamente, permettono di calcolare
+                    lo <b>spessore</b> del
+                    campione e, in teoria, la <b>banda proibita</b>.
+                </p>
+
+                <p>
+                    Se avete letto il mio
+                    <a href="fotovoltaici/perovskite/perovskite.html" target="_blank">articolo precedente</a>
+                    sull'ellissometria, saprete già cosa sono il <b>modello ottico a strati</b> ed
+                    i coefficienti di <b>riflessione</b> e <b>trasmissione</b>
+                    (<span class = "math">r</span> e <span class = "math">t</span>).
+                    Ora, occorre sapere che ad <b>incidenza normale</b> (ovvero se il raggio
+                    di luce è perpendicolare al campione) in un modello a <b>tre strati</b>
+                    valgono le seguenti relazioni:
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle left-marker" onclick="togglenote(this)"></i>
+                        <span class = "left-note">
+                            Ad incidenza normale non è possibile distinguere
+                            fra le polarizzazioni <i>p</i> ed <i>s</i>, quindi queste
+                            equazioni valgono per entrambe.
+                        </span>
+                    </span>
+
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                        <span class = "right-note">
+                            <span class = "math">n<sub>1</sub></span>: indice di rifrazione dell'aria. <br>
+                            <span class = "math">n<sub>2</sub></span>: indice di rifrazione del MAPbI<sub>3</sub>. <br>
+                            <span class = "math">&real;</span>: parte reale.
+                        </span>
+                    </span>
+
+                    $$ \begin{array}{r c l}
+                    R &=& |r|^2 \\
+                    T &=& \Re\left(\frac{n_2}{n_1}\right)|t|^2 \\
+                    \end{array}$$
+
+                    Con queste equazioni in mente, possiamo quindi esprimere
+                    <span class = "math">R</span> e <span class = "math">T</span>
+                    analiticamente in funzione dell'indice di rifrazione ignoto, ovvero quello
+                    del MAPbI<sub>3</sub>. Dopodiché, se <b>paragoniamo queste espressioni
+                    analitiche con le misurazioni</b> di <span class = "math">R</span> e
+                    <span class = "math">T</span> effettuate, si può ottenere
+                    l'indice di rifrazione semplicemente risolvendo un'equazione
+                    fra le due quantità. Il modello permette inoltre di calcolare
+                    lo spessore dello strato del MAPbI<sub>3</sub>, che risulta
+                    essere un parametro ottico incluso nei calcoli.
+                </p>
+
+                <p>
+                    Per motivi di spazio, non scendo nel dettaglio su come effettuare
+                    tutti i calcoli, che per noi richiesero lunghissime espressioni
+                    di codice che impegnarono parecchio i nostri processori. Tuttavia, per
+                    chiarire meglio le fasi principali del processo, ho disegnato qui sotto
+                    un diagramma di flusso. Seguendo le frecce, dall'indice di rifrazione
+                    (che è un'incognita)
+                    si arriva ad un'espressione analitica per <span class = "math">R</span>
+                    e <span class = "math">T</span>. Questa viene poi paragonata
+                    alle misurazioni di riflettanza e trasmittanza effettuate,
+                    ottenendo dunque una soluzione numerica per l'indice di rifrazione
+                    e lo spessore dello strato di MAPbI<sub>3</sub> (che è un parametro
+                    nelle espressioni di <span class = "math">R</span>
+                    e <span class = "math">T</span>).
+                </p>
+
+                <div class="captioned-img-wrapper full-img" style = "width: 70%">
+                    <img src = "fotovoltaici/perovskite/img/modello_ottico.png" style ="border-radius:0;">
+                    <div class="img-caption">
+                        Schema del processo matematico che permette di calcolare
+                        l'indice di rifrazione e lo spessore di un campione attraverso
+                        misurazioni di riflettanza e trasmittanza.
+                    </div>
+                </div>
+
+                <h2>Risultati</h2>
+
+                <p>
+                    I risultati che ottenemmo dall'analisi delle misurazioni di
+                    riflettanza e trasmittanza non furono molto soddisfacenti,
+                    anche se confermarono a grandi linee i dati dell'ellissometria.
+                    Nei grafici qui sotto ho riportato un esempio dell'indice di
+                    rifrazione calcolato con il metodo descritto nella sezione precedente.
+                    Va detto innanzitutto che <b>la curva di riferimento non è necessariamente
+                    la soluzione "corretta"</b>, in quanto viene dalla [1] e quindi da
+                    un altro processo in un altro laboratorio. Tutto sommato,
+                    il risultato calcolato segue l'andamento previsto, ma non in modo
+                    molto soddisfacente.
+                </p>
+
+                <p>
+                    Gli spessori calcolati con questo modello risultarono più
+                    vicini ai dati ottenuti con l'ellissometria, 100-300 nm di
+                    MAPbI<sub>3</sub> con 10-20 nm di ruvidità. Anche in questo
+                    caso, tuttavia, la corrispondenza si rivelò un po' approssimativa.
+                </p>
+
+
+
+                <div class="captioned-img-wrapper full-img" style = "width: 80%">
+                    <img src = "fotovoltaici/perovskite/img/nk-RT.png" style ="border:1px solid black">
+                    <div class="img-caption">
+                        Un esempio dei risultati ottenuti calcolando gli indici
+                        di rifrazione attraverso misurazioni di riflettanza e trasmittanza.
+                        Il riferimento viene dalla [1].
+                    </div>
+                </div>
+
+                <p>
+                    Insomma, la morale è che l'analisi dei dati ottenuti
+                    dalla riflettanza e la trasmittanza non andò come ci saremmo
+                    aspettati, ma esiste una spiegazione a tutto ciò. Innanzitutto,
+                    penso che <b>l'ellissometria sia un metodo molto più preciso</b>,
+                    proprio perché sia i macchinari che i programmi utilizzati
+                    hanno un livello più avanzato di tecnologia. Il motivo principale,
+                    però, è che, giunti alla fine dell'attività di ricerca, ci
+                    accorgemmo di aver <b>calibrato diversamente</b> gli strumenti per misurare
+                    la riflettanza e la trasmittanza. Se mettiamo a confronto riflettanza,
+                    trasmittanza ed assorbanza, come riportato nel grafico
+                    qui sotto, possiamo infatti capire meglio la causa di tali
+                    errori.
+
+<!-- Immagini R, T, A -->
+                </p>
+
+
+                <div class="captioned-img-wrapper full-img" style = "width: 80%">
+                    <img src = "fotovoltaici/perovskite/img/RTAneg.png" style ="border:1px solid black">
+                    <div class="img-caption">
+                        Le misurazioni di trasmittanza e riflettanza davano un'assorbanza
+                        negativa dopo i 900 nm, ad indicare un probabile errore di calibrazione.
+                    </div>
+                </div>
+
+                <p>
+                    Da un punto di vista fisico, ogni fotone presente in un fascio
+                    di luce può essere riflesso, trasmesso, o assorbito da un
+                    determinato materiale. Non essendoci altre opzioni, possiamo
+                    facilmente derivare la relazione <span class = "math">
+                    R + T + A = 1</span>.
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle left-marker" onclick="togglenote(this)"></i>
+                        <span class = "left-note">
+                            <span class = "math">A</span> è l'assorbanza, ovvero
+                            l'intensità di luce assorbita da un materiale.
+                        </span>
+                    </span>
+
+
+                    Nel grafico di sopra, i valori di
+                    <span class = "math">R</span> e <span class = "math">T</span>
+                    sono misurati, ma <span class = "math">A</span> è calcolato, motivo
+                    per cui la somma delle tre quantità è sempre esattamente uguale ad 1. Dopo
+                    i 900 nm circa, però, <b>l'assorbanza diventa negativa</b>, che in questo
+                    caso è un fenomeno <b>impossibile</b>, in quanto comporterebbe l'emissione
+                    di luce da parte del campione. La conclusione è quindi che
+                    vi è un <b>errore di calibrazione</b> fra le misurazioni di
+                    riflettanza e trasmittanza, cosa che scoprimmo troppo tardi
+                    per effettuare di nuovo le misurazioni.
+
+                </p>
+
+                <h2>Banda Proibita (Tauc/Cody)</h2>
+
+                <p>
+                    L'ultima quantità che avremmo dovuto calcolare con
+                    le misurazioni di riflettanza e trasmittanza era la <b>banda
+                    proibita</b>. Uso il condizionale perché questo calcolo va effettuato
+                    a partire dall'indice di rifrazione e, visti i cattivi risultati ottenuti
+                    con la riflettanza e la trasmittanza, decidemmo di
+                    usare i dati dell'ellissometria per vedere se fosse possibile
+                    trovare qualche riscontro. Partendo da <span class = "math">n</span>
+                    e <span class = "math">&kappa;</span>, si possono quindi usare i metodi di
+                    <b>Tauc</b> e <b>Cody</b>, che forniscono una maniera abbastanza
+                    semplice per calcolare la banda proibita dei semiconduttori amorfi.
+                    Su questo argomento
+                    non sono molto preparato e quindi non andrò molto nel dettaglio:
+                    mi limiterò a riportare ciò che mi fu insegnato oralmente
+                    dagli altri membri del laboratorio.
+                </p>
+
+                <p>
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                        <span class = "right-note">
+                            Il tipo di transizione (diretta o indiretta) in un
+                            semiconduttore stabilisce, in poche parole, se un
+                            elettrone può passare alla banda di conduzione semplicemente
+                            assorbendo un fotone, oppure se è necessaria la generazione
+                            di un fonone (una vibrazione della struttura atomica).
+                        </span>
+                    </span>
+
+                    Innanzitutto, occorre calcolare
+                    il <b>coefficiente di assorbimento</b>, ovvero \( \alpha = \frac{4\pi\kappa}{\lambda} \),
+                    ed esprimerlo in funzione dell'energia (<span class = "math">&epsilon;</span>)
+                    dell'onda invece della sua lunghezza (<span class = "math">&lambda;</span>):
+                    \( \varepsilon = \frac{hc}{\lambda} \). Dopodiché, si fa un
+                    grafico di \( (\alpha\varepsilon)^\frac{1}{m} \)
+                    oppure \( \left(\frac{\alpha}{\varepsilon}\right)^\frac{1}{m} \) (metodi Tauc e Cody rispettivamente)
+                    in funzione di <span class = "math">&epsilon;</span>, dove <i>m</i>
+                    è uguale a 2 per i materiali a <b>transizione indiretta</b> ed &frac12; per quelli
+                    a <b>transizione diretta</b>. In questo grafico, si cerca poi una <b>regione
+                    lineare</b> "evidente", il cui coefficiente angolare è uguale alla banda
+                    proibita.
+                </p>
+
+                <p>
+                    Questi metodi funzionano bene per i semiconduttori più comuni
+                    (silicio, GaAs, ecc...). Nel caso del MAPbI<sub>3</sub>, però,
+                    <b>la regione lineare non è molto evidente</b> e non è necessariamente
+                    una sola. I risultati, quindi, furono un po' "forzati",
+                    nel senso che li adattammo consapevolmente ai valori che ci aspettavamo di ottenere.
+                    Considerando il MAPbI<sub>3</sub> un materiale a <b>transizione
+                    diretta</b> (che produceva risultati
+                    migliori), riuscimmo quindi a calcolare dei valori della
+                    banda proibita compresi fra 1.5 ed 1.6 eV, che coincidevano quasi esattamente
+                    con quanto ricavato dall'ellissometria e dal confronto
+                    con la [1].
+                </p>
+
+                <p>
+                    Questo calcolo non fu effettuato con una procedura molto
+                    rigorosa, né eravamo sicuri che il MAPbI<sub>3</sub> fosse
+                    un materiale a transizione diretta. I risultati, perciò,
+                    non ebbero un valore di conferma molto credibile da un punto
+                    di vista scientifico, nonostante coincidessero bene
+                    con i valori dell'ellissometria e della [1]. Tuttavia, fu comunque positivo
+                    ed istruttivo utilizzare i metodi di Tauc e Cody per "controllare",
+                    seppure in modo approssimativo, i dati ottenuti in altri modi.
+                </p>
+
+                <h2>SEM ed AFM</h2>
+
+                <p>
+                Il <b>microscopio elettronico a scansione</b> (SEM) è un dispositivo
+                che bombarda il campione con un fascio di elettroni, detti "primari",
+                per poi captare attraverso dei sensori gli elettroni riflessi (o "secondari")
+                e ricostruire un'immagine a livelli d'ingrandimento molto elevati.
+                Noi usammo questo strumento per confermare i nostri calcoli dello
+                <b>spessore</b> dello strato di MAPbI<sub>3</sub> dei campioni. Come
+                mostrato nell'immagine qui sotto, i valori che misurammo variavano
+                fra i 300 e i 450 nm, ovvero leggermente di più di quanto avevamo
+                stimato.
+            </p>
+
+                <div class="captioned-img-wrapper full-img" style = "width: 80%">
+                    <img src = "fotovoltaici/perovskite/img/50_6000_2.png" style ="border:1px solid black">
+                    <div class="img-caption">
+                        Immagine SEM di uno strato di MAPbI<sub>3</sub>, dove è
+                        visibile il valore dello spessore fra i 300 e i 450 nm,
+                        leggermente più alto di quanto calcolato.
+                    </div>
+                </div>
+
+                <p>
+                Il <b>microscopio a forza atomica</b> viene invece utilizzato per
+                creare un'immagine "topografica" del campione, ovvero la forma e la
+                ruvidità della sua superficie. Lo strumento dispone di un ago di metallo
+                microscopico, che tocca la superficie del campione in vari punti
+                ad intervalli regolari. I punti di contatto vengono registrati attraverso degli
+                impulsi elettrici, che permettono poi ad un computer associato di ricostruire
+                la superficie del campione. Come si può vedere dall'immagine qui sotto,
+                la ruvidità misurata ha una media quadratica intorno ai 10 nm, che è
+                quanto avevamo previsto nei calcoli.
+            </p>
+
+                <div class="captioned-img-wrapper full-img" style = "width: 80%">
+                    <img src = "fotovoltaici/perovskite/img/AFM.png" style ="border:1px solid black">
+                    <div class="img-caption">
+                        Ricostruzione ad AFM dello strato di ruvidità del MAPbI<sub>3</sub>,
+                        la cui media quadratica dello spessore risultò essere poco
+                        più di 10 nm, come previsto.
+                    </div>
+                </div>
+
+
+                <h2>Conclusione</h2>
+
+                <p>
+                    Guardando complessivamente tutta la nostra
+                    attività di ricerca, devo dire che il successo più grande
+                    fu l'ellissometria. Non solo riuscimmo
+                    a seguire una procedura strutturata e completa, ma ottenemmo
+                    anche dei risultati consistenti, che avevano riscontro in
+                    altre pubblicazioni sullo stesso tema. L'unica pecca, in questo
+                    caso, fu il fatto di non essere in grado di confermare l'analisi
+                    del software CompleteEASE con dei programmi scritti da noi in
+                    Mathematica o Matlab: nonostante i nostri sforzi, infatti,
+                    il codice da noi scritto richiedeva tempi di esecuzione troppo
+                    lunghi.
+                </p>
+
+                <p>
+                    Tutto ciò che seguì alle misurazioni di ellissometria fu, di
+                    fatto, una ricerca di conferme e riscontri dei valori già trovati.
+                    Purtroppo, in questo non avemmo moltissimo successo, o perché
+                    i risultati non combaciavano, o perché erano un po' forzati
+                    ed ottenuti attraverso metodi poco rigorosi. L'errore di
+                    calibrazione, inoltre, rese i dati poco attendibili e ci impedì
+                    di trovare una soluzione corretta alle nostre equazioni. Ciononostante,
+                    io personalmente non sottovaluto il fattore di apprendimento
+                    reso possibile da tutta l'attività di ricerca che svolgemmo. Lo
+                    scopo della borsa EPSCoR, in fondo, per noi ricercatori non
+                    ancora laureati (nel 2016), non era di fare qualche scoperta
+                    clamorosa, ma di imparare il metodo scientifico della ricerca
+                    e di ampliare le nostre conoscenze in materia di perovskiti e
+                    di ottica.
+                </p>
+
+                <p>
+                    Un ultimo commento va al valore delle perovskiti come materiali
+                    con applicazioni fotovoltaiche. Confesso che cominciai l'attività
+                    di ricerca convinto di lavorare con le celle solari del futuro
+                    e la terminai con moltissimi dubbi in merito. Le perovskiti sono
+                    materiali delicati, che si degradano molto velocemente con
+                    l'umidità e perdono di efficienza se esposte alla luce del sole
+                    troppo a lungo. L'<a href = "https://it.wikipedia.org/wiki/Isteresi" target="_blank">isteresi</a>
+                    che le caratterizza, così come, soprattutto, la forte dipendenza
+                    delle loro prestazioni dalle condizioni ambientali,
+                    ne rende il comportamento poco prevedibile, tanto che spesso,
+                    ripetendo più volte una misurazione, ottenevamo risultati diversi.
+                    A tutto ciò, la comunità scientifica sta trovando poco a poco
+                    dei rimedi, ma per ora sembra che tutte le energie dei
+                    ricercatori siano concentrate sulla massimizzazione dell'efficienza
+                    delle celle, a scapito di dimensioni e longevità. Resta inoltre
+                    la questione della commercializzazione delle celle, ovvero:
+                    una volta risolti tutti i problemi in laboratorio, come verrà affrontata
+                    la produzione a livello industriale?
+                </p>
+
+                <p>
+                    Tutto sommato, non si può non riconoscere l'enorme potenziale
+                    delle perovskiti per le applicazioni fotovoltaiche: per citare
+                    qualche idea che gira nella comunità scientifica, potrebbero
+                    essere usate per estrarre energia dalle finestre di vetro, oppure
+                    per creare delle pellicole di celle solari flessibili, e così via.
+                    Credo però che la ricerca, in questo campo, abbia
+                    ancora molta strada da fare e, soprattutto, che debba evitare
+                    di incagliarsi sulle cifre decimali dell'efficienza, quando
+                    la degradazione e la commercializzazione delle celle presentano
+                    ostacoli di importanza molto maggiore. Ovviamente, io non ho molta
+                    autorità in capitolo, in quanto ho solo visto una parte infinitesimale
+                    di ciò che è l'attuale stato della ricerca. Dalle discussioni
+                    in laboratorio, però, ho notato una leggera delusione intorno alle perovskiti:
+                    nonostante il loro potenziale, infatti, queste rischiano di diventare specchietti
+                    per le allodole, se la ricerca non si concentra sui loro problemi principali.
+                </p>
+
+            </div> <!-- article -->
+
+
+
+
+
+
+
+            <footer>
+                <hr>
+                <h3 id = "sources-header">Fonti</h3>
+
+                <ul id = "sources">
+                    <li> Löper, Philipp, Michael Stuckelberger, Bjoern Niesen, Jérémie Werner, Miha Filipič, Soo-Jin Moon, Jun-Ho Yum, Marko Topič, Stefaan De Wolf, and
+                            Christophe Ballif. "Complex Refractive Index Spectra of CH<sub>3</sub>NH<sub>3</sub>PbI<sub>3</sub> Perovskite Thin Films Determined by Spectroscopic Ellipsometry and
+                            Spectrophotometry." J. Phys. Chem. Lett. The Journal of Physical Chemistry Letters 6.1 (2015): 66-71. Web.</li>
+                    <li>Domenico Pacifici, <i>ENGN1931A: Photovoltaics Engineering - Lecture 5</i>, Brown University, 2016.</li>
+                    <li> Wikipedia, <i>Tauc Plot</i>,
+                        <a href = "https://en.wikipedia.org/wiki/Tauc_plot" target = "_blank">
+                        https://en.wikipedia.org/wiki/Tauc_plot</a>.</li>
+
+                </ul>
+            </footer>
+
+        </div> <!-- page-content-wrapper -->
+
+    </body>
+</html>

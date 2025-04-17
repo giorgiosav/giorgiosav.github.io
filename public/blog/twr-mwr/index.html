@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  TWR vs MWR
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP" crossorigin="anonymous">
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js" integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6" crossorigin="anonymous"></script>
+      <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"></script>
+      <script>
+          document.addEventListener("DOMContentLoaded", function() {
+              renderMathInElement(document.body, {
+                // customised options
+                // • auto-render specific keys, e.g.:
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "§", right: "§", display: false},
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\begin{equation}", right: "\\end{equation}", display: true},
+                    {left: "\\begin{align}", right: "\\end{align}", display: true},
+                    {left: "\\begin{alignat}", right: "\\end{alignat}", display: true},
+                    {left: "\\begin{gather}", right: "\\end{gather}", display: true},
+                    {left: "\\begin{CD}", right: "\\end{CD}", display: true},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                // • rendering keys, e.g.:
+                throwOnError : false
+              });
+          });
+      </script>
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+    
+      <a href="&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articles
+      </a>
+    
+      <a href="&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        About
+      </a>
+    
+      <a href="&#x2F;it"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Italiano
+      </a>
+    
+  
+
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  TWR vs MWR
+</h1>
+      
+
+
+  
+    
+  
+
+
+      
+
+  
+    <div class="date">2024-10-04</div>
+  
+
+  <p>Our two best friends, Alice and Bob, decided to invest money last year. Alice invested 200$
+at the beginning of the year, whereas Bob invested 100$ at the beginning of the year and
+another 100$ halfway through the year. Both ended up with 400$ at the end of the year. Whose
+portfolio grew more? (i.e. who got luckier?)</p>
+<p>This seems like a stupid question: they both invested 200$ and earned another 200$. When you think
+about it though, Bob invested his second 100$ for a shorter time period than Alice. If we assume that
+invested money on average grows at a constant rate, then Bob should have earned less than Alice, because
+his second 100$ were only invested for six months, compared to a whole year in Alice's case. Since Bob's
+returns were equal to Alice's, his portfolio must have grown more.</p>
+<p>In other words, if Bob invested for a shorter amount of time and earned the same as Alice,
+we could say that he got luckier (or invested in better assets). In finance, there are 2 ways
+of measuring this.</p>
+<p>The <strong>Time-Weighted Return</strong> (TWR) for Alice and Bob is exactly the same:</p>
+<p>$$\mathit{TWR}=\frac{B-A}{A}$$</p>
+<p>The <strong>Money-Weighted Return</strong> is where things start to differ. Here's the <a href="https://en.wikipedia.org/wiki/Modified_Dietz_method">modified Dietz</a>
+formula for MWR:</p>
+<p>$$\mathit{MWR} = \frac{B-A-F}{A + \sum_iW_iF_i}$$</p>
+<p>This time, §A§ is the initial investment amount, which is 200$ for Alice and 100$ for Bob. §B§ is the final
+amount, as before. §F=\sum_iF_i§ is the net of all cash flows (everything that was added minus everything that was taken out).
+§W_i§ are weights representing what fraction of the time period §F_i§ was invested for.
+In Alice's case, §F = 0§, but in Bob's case §F_1 = 100§ and §W_1 = 0.5§
+, because he invested 100$ halfway through the year. So for Bob §F = 100\$§ and
+§\sum_iF_iW_i = 100\cdot 0.5 = 50\$§
+, whereas for Alice §F = \sum F_iW_i = 0§
+(both values are zero).</p>
+<p>This means that for Alice, the TWR and MWR values are the same. For Bob, however, the MWR value is higher:</p>
+<p>$$\frac{400 - 100 - 100}{100 + \frac{365}{2} \cdot 100} \approx 1.33$$</p>
+<p>According to the MWR measurement, Bob got a 133% return on his investment. With this growth rate, if
+Bob had invested at the beginning of the year like Alice, by the end of the year he would have earned
+§200 \times (1 + 1.33) = 466\$§.</p>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>

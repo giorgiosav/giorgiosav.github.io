@@ -1,0 +1,321 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  Negative <code>extern</code>alities
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+    
+      <a href="&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articles
+      </a>
+    
+      <a href="&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        About
+      </a>
+    
+      <a href="&#x2F;it"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Italiano
+      </a>
+    
+  
+
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  Negative <code>extern</code>alities
+</h1>
+      
+
+
+  
+    
+  
+
+
+      
+
+  
+    <div class="date">2023-04-04</div>
+  
+
+  <p>So you're writing C++ and you found a really useful C library that you want to
+call from your C++ code. Let's take a look at a simple way to do this and then
+how you can shoot yourself in the foot.</p>
+<h2 id="the-happy-way">The Happy Way</h2>
+<p>Let's take a really simple example. You have this directory structure, where
+<code>harmonic</code> is the name of your C library.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>.
+</span><span>├── harmonic
+</span><span>│   ├── Makefile
+</span><span>│   ├── harmonic.c
+</span><span>│   └── harmonic.h
+</span><span>└── src
+</span><span>    ├── Makefile
+</span><span>    └── main.cpp
+</span></code></pre>
+<p>Here's the C code.</p>
+<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#65737e;">/****************** harmonic.h ******************/
+</span><span>
+</span><span style="color:#b48ead;">#ifndef</span><span> HARMONIC_H
+</span><span style="color:#b48ead;">#define </span><span>HARMONIC_H
+</span><span>
+</span><span style="color:#b48ead;">double </span><span style="color:#8fa1b3;">harmonic</span><span>(</span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">a</span><span>, </span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">b</span><span>);
+</span><span>
+</span><span style="color:#b48ead;">#endif
+</span><span>
+</span><span>
+</span><span style="color:#65737e;">/****************** harmonic.c ******************/
+</span><span>
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">math.h</span><span>&gt;
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">float.h</span><span>&gt;
+</span><span>
+</span><span style="color:#b48ead;">#include </span><span>&quot;</span><span style="color:#a3be8c;">harmonic.h</span><span>&quot;
+</span><span>
+</span><span style="color:#b48ead;">static double </span><span style="color:#8fa1b3;">safe_inverse</span><span>(</span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">a</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1 </span><span>/ (</span><span style="color:#96b5b4;">fabs</span><span>(a) + DBL_EPSILON);
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">double </span><span style="color:#8fa1b3;">harmonic</span><span>(</span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">a</span><span>, </span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">b</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">safe_inverse</span><span>(a) + </span><span style="color:#bf616a;">safe_inverse</span><span>(b);
+</span><span>}
+</span></code></pre>
+<p>The <code>harmonic</code> function computes <code>1/|a| + 1/|b|</code>, which is similar to the
+<a href="https://en.wikipedia.org/wiki/Harmonic_mean">harmonic mean</a>, but not quite. It
+uses <code>DBL_EPSILON</code> (a very small number) to avoid division by zero.</p>
+<p>Now let's write a very simple <code>Makefile</code>, without any bells and whistles. Just
+for fun, let's create a static library, <code>libharmonic.a</code>.</p>
+<pre data-lang="make" style="background-color:#2b303b;color:#c0c5ce;" class="language-make "><code class="language-make" data-lang="make"><span style="color:#65737e;">################ harmonic/Makefile ################
+</span><span>
+</span><span style="color:#8fa1b3;">libharmonic.a</span><span>: </span><span style="color:#a3be8c;">harmonic.o
+</span><span>	</span><span style="color:#bf616a;">ar</span><span> rcs libharmonic.a harmonic.o
+</span><span>
+</span><span style="color:#8fa1b3;">.PHONY</span><span>: </span><span style="color:#a3be8c;">clean
+</span><span style="color:#8fa1b3;">clean</span><span>:
+</span><span>	</span><span style="color:#bf616a;">rm -f</span><span> harmonic.o libharmonic.a
+</span></code></pre>
+<p><code>harmonic.o</code> will be built with the implicit rules of <code>make</code>. If you type <code>make</code>
+inside the <code>harmonic</code> directory, you should now see the static library
+<code>libharmonic.a</code>.</p>
+<p>Alright, let's write some C++ code that uses this library now.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#65737e;">/****************** src/main.cpp ******************/
+</span><span>
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">iostream</span><span>&gt;
+</span><span>
+</span><span style="color:#b48ead;">extern </span><span>&quot;</span><span style="color:#a3be8c;">C</span><span>&quot; {
+</span><span style="color:#b48ead;">#include </span><span>&quot;</span><span style="color:#a3be8c;">harmonic.h</span><span>&quot;
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">using</span><span> std::cout;
+</span><span>
+</span><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>    </span><span style="color:#b48ead;">double</span><span> a = </span><span style="color:#d08770;">10</span><span>;
+</span><span>    </span><span style="color:#b48ead;">double</span><span> b = </span><span style="color:#d08770;">20</span><span>;
+</span><span>
+</span><span>    cout &lt;&lt; &quot;</span><span style="color:#a3be8c;">Result: </span><span>&quot; &lt;&lt; </span><span style="color:#bf616a;">harmonic</span><span>(a, b) &lt;&lt; &#39;</span><span style="color:#96b5b4;">\n</span><span>&#39;;
+</span><span>}
+</span></code></pre>
+<p>The <code>extern "C"</code> part is used to prevent name mangling by C++. If you don't like
+the <code>#include</code> directive inside the <code>extern "C"</code> block, there are a couple of
+alternatives:</p>
+<ul>
+<li>Add <code>extern "C"</code> to the C header file and wrap it in <code>#ifdef __cplusplus</code>/<code>#endif</code> directives. This is generally considered ugly,
+because, if the C code is lower-level, it shouldn't "care" whether or not
+it will be called by C++ code. You could argue that this violates the
+<a href="https://en.wikipedia.org/wiki/Single-responsibility_principle">Single-Responsibility
+Principle</a>,
+although I'm sure there are use cases in which it's justified.</li>
+<li>Copy the C header into a C++ header that declares all functions as <code>extern "C"</code> and only include the C++ header.</li>
+</ul>
+<p>What do we expect this code to print? <code>1/10 + 1/20 == 0.1 + 0.05</code>, so we should
+get <code>Result: 0.15</code>.</p>
+<p>And now for our <code>Makefile</code>. Let's ignore any changes in the
+source files of the <code>harmonic</code> library, to keep things simple.</p>
+<pre data-lang="make" style="background-color:#2b303b;color:#c0c5ce;" class="language-make "><code class="language-make" data-lang="make"><span style="color:#65737e;">##################### src/Makefile #####################
+</span><span style="color:#bf616a;">CXX </span><span>= </span><span style="color:#a3be8c;">g++
+</span><span style="color:#8fa1b3;">main</span><span>: </span><span style="color:#a3be8c;">main.cpp ../harmonic/libharmonic.a
+</span><span>	</span><span style="color:#b48ead;">$(</span><span style="color:#bf616a;">CXX</span><span style="color:#b48ead;">) </span><span style="color:#bf616a;">-I</span><span> ../harmonic/</span><span style="color:#bf616a;"> -L</span><span> ../harmonic/</span><span style="color:#bf616a;"> -lharmonic -o $@ $^
+</span><span>
+</span><span style="color:#8fa1b3;">.PHONY</span><span>: </span><span style="color:#a3be8c;">clean
+</span><span style="color:#8fa1b3;">clean</span><span>:
+</span><span>	</span><span style="color:#bf616a;">rm -f</span><span> main main.o
+</span><span>	</span><span style="color:#96b5b4;">cd</span><span> ../harmonic &amp;&amp; </span><span style="color:#b48ead;">$(</span><span style="color:#bf616a;">MAKE</span><span style="color:#b48ead;">) </span><span style="color:#bf616a;">clean
+</span></code></pre>
+<p>Alright! Type <code>make</code>, execute <code>./main</code> and you should see the magic happen:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span>&gt; ./main
+</span><span style="color:#bf616a;">Result:</span><span> 0.15
+</span></code></pre>
+<p>Now let's see how you can shoot yourself in the foot.</p>
+<h2 id="the-nefarious-way">The Nefarious Way</h2>
+<p>Suppose your project starts to grow and now you want to compile an intermediate
+<code>main.o</code> file instead of always recompiling the source <code>main.cpp</code> file.
+You need to change the <code>Makefile</code> to add a dependency on <code>main.o</code>.</p>
+<pre data-lang="make" style="background-color:#2b303b;color:#c0c5ce;" class="language-make "><code class="language-make" data-lang="make"><span style="color:#65737e;">##################### src/Makefile #####################
+</span><span style="color:#bf616a;">CXX </span><span>= </span><span style="color:#a3be8c;">g++
+</span><span style="color:#8fa1b3;">main</span><span>: </span><span style="color:#a3be8c;">main.o ../harmonic/libharmonic.a
+</span><span>	</span><span style="color:#b48ead;">$(</span><span style="color:#bf616a;">CXX</span><span style="color:#b48ead;">) </span><span style="color:#bf616a;">-L</span><span> ../harmonic/</span><span style="color:#bf616a;"> -lharmonic -o $@ $^
+</span></code></pre>
+<p>If you try to compile this, you will get one of those frustrating linker errors,
+complaining about an undefined reference to the <code>harmonic</code> function. To fix
+this, you need <strong>external linkage</strong>.</p>
+<p>In C and C++, you can use the <code>extern</code> keyword to specify that a function or
+variable is defined somewhere else in the program. In our case, we need to tell
+the compiler that the <code>harmonic</code> function won't be available to the <code>main.o</code>
+object file, but it will be defined in the final executable. Let's take an example.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#65737e;">/****************** src/main.cpp ******************/
+</span><span>
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">iostream</span><span>&gt;
+</span><span>
+</span><span style="color:#b48ead;">extern </span><span>&quot;</span><span style="color:#a3be8c;">C</span><span>&quot; {
+</span><span>    </span><span style="color:#b48ead;">extern double </span><span style="color:#8fa1b3;">harmonic</span><span>(</span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">a</span><span>, </span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">b</span><span>);
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">using</span><span> std::cout;
+</span><span>
+</span><span style="color:#b48ead;">int </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>    </span><span style="color:#b48ead;">double</span><span> a = </span><span style="color:#d08770;">10</span><span>;
+</span><span>    </span><span style="color:#b48ead;">double</span><span> b = </span><span style="color:#d08770;">20</span><span>;
+</span><span>
+</span><span>    cout &lt;&lt; &quot;</span><span style="color:#a3be8c;">Result: </span><span>&quot; &lt;&lt; </span><span style="color:#bf616a;">harmonic</span><span>(a, b) &lt;&lt; &#39;</span><span style="color:#96b5b4;">\n</span><span>&#39;;
+</span><span>}
+</span></code></pre>
+<p>The conversation between the compiler and the developer goes more or less like
+this:</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>Compiler: Hey, uhm... I can&#39;t find this &quot;harmonic&quot; function anywhere.
+</span><span>
+</span><span>Developer: Don&#39;t worry, it&#39;s defined in another file. The linker will find
+</span><span>           it when building the final executable. Trust me.
+</span><span>
+</span><span>Compiler: OK.
+</span></code></pre>
+<p>... and that's how you fool the compiler!</p>
+<p>The <code>extern</code> keyword is dangerous, because you are telling the compiler to trust
+you, but are you really trustworthy?? What do you think will happen if the
+function signature of <code>harmonic</code> changes, but the <code>extern</code> declaration remains
+the same? Let's go do some damage.</p>
+<pre data-lang="c" style="background-color:#2b303b;color:#c0c5ce;" class="language-c "><code class="language-c" data-lang="c"><span style="color:#65737e;">/****************** harmonic.h ******************/
+</span><span>
+</span><span style="color:#b48ead;">#ifndef</span><span> HARMONIC_H
+</span><span style="color:#b48ead;">#define </span><span>HARMONIC_H
+</span><span>
+</span><span style="color:#b48ead;">double </span><span style="color:#8fa1b3;">harmonic</span><span>(</span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">a</span><span>, </span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">b</span><span>, </span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">c</span><span>);
+</span><span>
+</span><span style="color:#b48ead;">#endif
+</span><span>
+</span><span>
+</span><span style="color:#65737e;">/****************** harmonic.c ******************/
+</span><span>
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">math.h</span><span>&gt;
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">float.h</span><span>&gt;
+</span><span>
+</span><span style="color:#b48ead;">#include </span><span>&quot;</span><span style="color:#a3be8c;">harmonic.h</span><span>&quot;
+</span><span>
+</span><span style="color:#b48ead;">static double </span><span style="color:#8fa1b3;">safe_inverse</span><span>(</span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">a</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">1 </span><span>/ (</span><span style="color:#96b5b4;">fabs</span><span>(a) + DBL_EPSILON);
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">double </span><span style="color:#8fa1b3;">harmonic</span><span>(</span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">a</span><span>, </span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">b</span><span>, </span><span style="color:#b48ead;">double </span><span style="color:#bf616a;">c</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">safe_inverse</span><span>(a) + </span><span style="color:#bf616a;">safe_inverse</span><span>(b) + </span><span style="color:#bf616a;">safe_inverse</span><span>(c);
+</span><span>}
+</span></code></pre>
+<p>We've just added an extra term, <code>double c</code>, to the <code>harmonic</code> function, which now
+computes <code>1/|a| + 1/|b| + 1/|c|</code>. If we leave <code>main.cpp</code> as it is, with the
+wrong declaration for <code>harmonic</code>, will it compile?</p>
+<p>... Yes.</p>
+<p>And if we run it?</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span>&gt; ./main
+</span><span style="color:#bf616a;">Result:</span><span> 4.5036e+15
+</span></code></pre>
+<p>There's your gunshot! Intuitively, this happens because
+the callee (the <code>harmonic</code> function) assumes that the caller (the <code>main</code>
+function) "prepared" 3 arguments (i.e. placed them in the relevant registers).
+<code>main</code> thinks that <code>harmonic</code>
+takes 2 arguments though, so it only prepared 2. The third argument
+ends up being uninitialized memory, hence the ridiculous number that gets printed.</p>
+<p>To see this in more detail, we can dump the assembly from the <code>main</code>
+executable using <code>objdump</code>. To make things clearer, I changed our variables <code>a</code>
+and <code>b</code> in the <code>main</code> function to be <code>int</code>s instead of <code>double</code>s.</p>
+<pre style="background-color:#2b303b;color:#c0c5ce;"><code><span>&lt;_main&gt;:
+</span><span>                pushq   %rbp
+</span><span>                movq    %rsp, %rbp
+</span><span>                subq    $32, %rsp
+</span><span>                # [...]
+</span><span>                movl    $10, -4(%rbp)     # int a = 10
+</span><span>                movl    $20, -8(%rbp)     # int b = 20
+</span><span>                # [...]
+</span><span>                cvtsi2sdl       -4(%rbp), %xmm0  # convert to double and store
+</span><span>                cvtsi2sdl       -8(%rbp), %xmm1
+</span><span>                movq    %rax, -16(%rbp)
+</span><span>                callq   0x100002fb0 &lt;_harmonic&gt;  # call harmonic
+</span><span>                # [...]
+</span><span>                addq    $32, %rsp
+</span><span>                popq    %rbp
+</span><span>                retq
+</span><span>
+</span><span>&lt;_harmonic&gt;:
+</span><span>                pushq   %rbp
+</span><span>                movq    %rsp, %rbp
+</span><span>                subq    $48, %rsp
+</span><span>                movsd   %xmm0, -8(%rbp)   # double a
+</span><span>                movsd   %xmm1, -16(%rbp)  # double b
+</span><span>                movsd   %xmm2, -24(%rbp)  # double c
+</span><span>                movsd   -8(%rbp), %xmm0
+</span><span>                callq   0x100003010 &lt;_safe_inverse&gt;
+</span><span>                movsd   -16(%rbp), %xmm1
+</span><span>                movsd   %xmm0, -32(%rbp)
+</span><span>                movaps  %xmm1, %xmm0
+</span><span>                # [...]
+</span><span>                addq    $48, %rsp
+</span><span>                popq    %rbp
+</span><span>                retq
+</span></code></pre>
+<p>As you can see, the <code>main</code> function stores 2 arguments in <code>xmm0</code> and
+<code>xmm1</code>. <code>harmonic</code>, however, reads 3 arguments
+from <code>xmm0</code>, <code>xmm1</code> and <code>xmm2</code>, so the third argument from <code>xmm2</code> will be
+uninitialized memory.</p>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>

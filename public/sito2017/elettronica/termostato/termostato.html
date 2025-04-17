@@ -1,0 +1,344 @@
+<!DOCTYPE HTML>
+<html lang = "it">
+    <head>
+        <meta charset="utf-8">
+        <base href="../../">
+        <script type="text/javascript" src = "head.js"></script>
+        <script type="text/javascript" src = "elettronica/termostato/termostato.js" defer></script>
+        <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+        <link rel="stylesheet" href="elettronica/termostato/termostato_style.css">
+    </head>
+
+
+
+    <body>
+        <script type = "text/javascript" src = "navbar.js"></script>
+        <script> document.write(navigation(2)); </script>
+        <noscript>
+            <div id="js-warning">
+                Purtroppo questo sito richiede JavaScript
+            </div>
+        </noscript>
+
+        <div id="page-content-wrapper">
+
+            <div id = "header">
+                <h1 id = "article-title">Un Termostato Semplice</h1>
+            </div>
+
+            <div id = "publication-date">
+                <hr>
+                29 Agosto 2017
+            </div>
+
+
+            <div id="article">
+
+                <h2>Premessa</h2>
+
+                <p>
+
+                    Qualche giorno fa, mentre stavo leggendo <i>The Art of Electronics</i>
+                    [1], ho trovato, fra le primissime pagine, lo schema di un
+                    semplice circuito per un <b>termostato</b>. Di per sé, non presentava
+                    nulla di particolare, ma ho deciso comunque di approfittare
+                    dell'occasione per prendere un po' la mano con <b>JavaScript</b>
+                    e creare una piccola applicazione interattiva che ne illustrasse
+                    il funzionamento. Il circuito di per sé è piuttosto semplice,
+                    così come l'applicazione che ho scritto, per cui lo scopo di
+                    quest'articolo è solo di <b>raccogliere qualche appunto</b>, sia sul
+                    termostato che sul codice che ho usato.
+
+                </p>
+
+                <h2>Il Circuito</h2>
+
+                <p>
+                    Un termostato ha sostanzialmente la funzione di segnalare
+                    se la temperatura dell'ambiente circostante è al disopra
+                    o al di sotto di una certa soglia. Il circuito illustrato
+                    qui sotto compie questa funzione utilizzando principalmente
+                    due componenti (oltre ai vari resistori): un <b>termistore</b>
+                    ed un <b>comparatore</b>. Il termistore ha una resistenza
+                    che diminuisce con l'aumento della temperatura, mentre il
+                    comparatore produce un segnale alto (5V) o basso (0V) all'uscita,
+                    a seconda di quale dei due ingressi ha un voltaggio maggiore.
+                </p>
+
+                <p>
+                    Le coppie di resistori <span class = "math">R1-R2</span> ed
+                    <span class = "math">R3-R4</span> formano dei <b>partitori
+                    di tensione</b>: in particolare, la tensione all'ingresso
+                    positivo del comparatore diminuisce con l'aumento della temperatura,
+                    per via dell'azione del termistore. Finché la tensione
+                    all'ingresso negativo del comparatore è <b>più bassa</b> di quella
+                    all'ingresso positivo, l'uscita del comparatore è a circa 5V
+                    e quindi <b>non passa la corrente</b> attraverso il diodo. Quando
+                    la situazione si inverte, invece, il comparatore emette un
+                    segnale basso e la corrente passa, facendo illuminare il diodo,
+                    che è un LED.
+                </p>
+
+                <p>
+                    Per quanto riguarda <span class="math">R5</span>, è semplicemente
+                    una resistenza che <b>limita la corrente</b> attraverso il diodo.
+                    Usando gli stessi dati della [1], possiamo supporre che il diodo
+                    richieda una tensione di 1.6V e che la corrente attraverso di
+                    esso non debba superare i 5mA. Il valore di <span class="math">R5</span>
+                    si può allora calcolare con una semplice divisione:
+                    \( R5 = \frac{5V-1.6V}{5mA}=680 \Omega \).
+                </p>
+
+                <p>
+                    L'applicazione che ho creato qui sotto permette di <b>cambiare
+                    la temperatura</b> con il cursore bianco e controllare lo stato
+                    corrispondente del circuito. I valori di numerici forniti sono
+                    in realtà <b>approssimativi</b>, in quanto vengono calcolati
+                    supponendo che il termistore sia perfettamente lineare in tutto
+                    l'intervallo di temperature fra 0 e 50 °C.
+                </p>
+
+                <div id = "temp">
+                    <input type="range" id = "tempslide" min="0" max="100" step="1" onchange="updateTemp();updateCanvas();"
+                    oninput="updateTemp();updateCanvas();" value="52">
+
+
+                    <span id = "temppar"></span>
+                </div>
+
+                <img src="elettronica/termostato/img/circuito_termostato.png" id = "circuit">
+
+                <canvas id="myCanvas">
+                    Il tuo browser non è compatibile con l'elemento "canvas".
+                </canvas>
+
+                <h2>Il Codice</h2>
+
+                <p>
+                    Sebbene non abbia molto a che vedere con l'elettronica,
+                    includo questa sezione sul codice dell'applicazione perché
+                    penso sia utile (per me) scrivere qualche appunto sui
+                    problemi che ho incontrato e come li ho risolti. Mi rendo
+                    conto di essere alle prime armi con JavaScript e di non
+                    aver creato <b>nulla di speciale</b>, ma, come dicono mille proverbi
+                    popolari, in qualche modo bisogna pur cominciare. L'ultima
+                    cosa da aggiungere, infine, è che la sorgente di questa
+                    pagina si può consultare premendo <code>CTRL+U</code> (o <code>CMD+U</code>),
+                    oppure sulla
+                    <a href="https://github.com/giorgiosav/giorgiosav.github.io/tree/master/elettronica/termostato"
+                    target="_blank">mia pagina di GitHub</a>. Il codice dell'applicazione
+                    in JavaScript si trova <a href="https://github.com/giorgiosav/giorgiosav.github.io/blob/master/elettronica/termostato/termostato.js" target="_blank">qui</a>.
+
+                </p>
+
+                <p>
+                    Le principali <b>funzionalità</b> dell'applicazione sono le seguenti:
+                    <ol>
+                        <li>Il cursore della temperatura.</li>
+                        <li>Il colore dell'indicatore numerico della temperatura.</li>
+                        <li>L'immagine contenuta in un elemento <a href = "https://www.w3schools.com/html/html5_canvas.asp" target="_blank"><i>canvas</i></a>.</li>
+                        <li>Il ridimensionamento dell'immagine insieme alla finestra.</li>
+                        <li>Il posizionamento fisso dei valori numerici e della
+                            luce del LED, anche se l'immagine viene ridimensionata.</li>
+                    </ol>
+                </p>
+
+                <h3>Cursore della Temperatura</h3>
+                <p>
+                    Il <b>cursore della temperatura</b> è piuttosto semplice e si può
+                    ottenere utilizzando l'apposita etichetta di HTML
+                    <code>&lt;input type="range"&gt;</code> ed ampliarlo un po' secondo
+                    le proprie esigenze. Io ho usato il seguente codice:
+
+                <pre class="code">
+&lt;input type="range" id = "tempslide" min="0" max="100" step="1"
+onchange="updateTemp();updateCanvas();" oninput="updateTemp();updateCanvas();" value="52"&gt;
+                </pre>
+
+                    L'unica cosa da notare qui è l'uso di <code>onchange</code> e
+                    <code>oninput</code>, che in teoria dovrebbero avere la stessa funzione.
+                    Le ho incluse entrambe perché, a quanto pare, <code>oninput</code>
+                    è compatibile con tutti i browser principali tranne Internet Explorer,
+                    che invece richiede <code>onchange</code>. Il risultato è comunque
+                    lo stesso, ovvero di chiamare le due funzioni <code>updateTemp()</code>
+                    e <code>updateCanvas()</code> dal codice in JavaScript ogni volta
+                    che il cursore cambia di posizione. Come suggerito dal nome, queste
+                    due funzioni aggiornano l'indicatore della temperatura e lo stato
+                    del <i>canvas</i> che contiene l'immagine.
+
+                </p>
+
+                <h3>Indicatore Numerico</h3>
+
+                <p>
+                    Il <b>colore dell'indicatore numerico</b>, che cambia
+                    gradualmente dal blu al rosso, mi ha dato vari problemi, per via
+                    della conversione fra numeri esadecimali e stringhe. La funzione
+                    che se ne occupa si chiama <code>updateTemp()</code> ed è
+                    riportata qui sotto.
+
+                    <pre class="code">
+function updateTemp() {
+    getTemp();
+    var r = Math.round(tempSlide*255/100);
+    var b = 255-r;
+
+    var tempString = temp.toFixed(1) + " °C"
+    var colorString = "#"+("0"+r.toString(16)).slice(-2)+"11"+("0"+b.toString(16)).slice(-2);
+    tempPar.innerHTML ="&lt;b&gt;"+tempString.fontcolor(colorString)+"&lt;/b&gt;";
+}
+                    </pre>
+
+                    Le funzioni e variabili più semplici sono le seguenti.
+                    <ul>
+                        <li><code>getTemp()</code>: una funzione che aggiorna il valore di <code>temp</code> (la temperatura attuale).</li>
+                        <li><code>r</code>, <code>b</code>: valori RGB di rosso e verde.</li>
+                        <li><code>tempString</code>: stringa accanto al cursore che indica la temperatura attuale.</li>
+                        <li><code>toFixed(1)</code>: <code>temp</code> in una stringa con un numero fisso (1) di cifre decimali (per motivi estetici).</li>
+                    </ul>
+
+                    Infine, la parte
+                    più problematica è stata <code>colorString</code>, che è la
+                    stringa con il codice <b>esadecimale</b> per il colore di <code>tempString</code>.
+                    La funzione <code>toString(16)</code> converte un numero decimale
+                    in esadecimale sotto forma di stringa, ma non necessariamente in
+                    un formato adatto per i colori: per esempio, il valore 10
+                    viene convertito semplicemente in <code>"A"</code> e non <code>"0A"</code>,
+                    per cui al posto di <code>#0A11F3</code> si avrà <code>#A11F3</code>,
+                    che verrà interpretato come un altro colore.
+                    Insomma, una volta
+                    identificato il problema, ho trovato una soluzione su StackOverflow,
+                    utilizzando <code>("0"+r.toString(16)).slice(-2)</code>.
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+
+                        <span class = "right-note">
+                            <code>v.slice(a,b)</code> crea un vettore con gli elementi
+                            da <code>v[a]</code> a <code>v[b]</code>. Se <code>a</code>
+                            viene omesso, è uguale a 0, mentre i numeri negativi
+                            segnalano di cominciare dalla fine del vettore <code>v</code>.
+                        </span>
+                    </span>
+
+                    La funzione
+                    <code>slice(-2)</code> crea un vettore (una stringa, in questo
+                    caso) di 2 elementi a partire dalla fine del vettore su cui
+                    agisce, che è <code>("0"+r.toString(16))</code>. In questo modo,
+                    i valori esadecimali hanno, all'occorrenza, uno 0 davanti e
+                    sono quindi sempre di <b>2 cifre</b>.
+
+                </p>
+
+                <h3>Immagine in Canvas</h3>
+
+                <p>
+                L'elemento <i>canvas</i> crea un <b>ambiente grafico</b> facilmente manipolabile
+                con JavaScript, che per quest'applicazione mi è risultato particolarmente
+                utile. Per inserirvi un'immagine, basta utilizzare la funzione
+                <code>ctx.drawImage(immagine, x, y, ampiezza, altezza)</code>. Nel
+                mio caso, ho utilizzato il seguente codice, all'interno della
+                funzione <code>updateCanvas()</code>. Per semplicità, riporto solo
+                le righe di codice rilevanti.
+
+                <pre class = "code">
+function updateCanvas() {
+        var canvas = document.getElementById("myCanvas");
+        var img = document.getElementById("circuit");
+        var imgRatio = img.height/img.width;
+        var articleWidth = document.getElementById("article").offsetWidth;
+        var imgWidth = 0.9*articleWidth;
+
+        canvas.width = articleWidth;
+        canvas.height = imgWidth*imgRatio;
+
+        ctx.drawImage(img, imgX, 0, imgWidth, imgWidth*imgRatio);
+
+        // Altro codice non rilevante
+}
+
+// Altro codice non rilevante
+
+window.addEventListener('resize', updateCanvas);
+                </pre>
+
+                L'unica cosa da notare nel codice è come esso reagisce al
+                ridimensionamento della finestra. Le variabili <code>imgWidth</code>
+                e <code>canvas.width</code> (le larghezze dell'immagine e del
+                <i>canvas</i> rispettivamente), sono entrambe definite in funzione
+                della larghezza dell'articolo, ovvero <code>articleWidth</code>.
+
+                <span class = "note" >
+                    <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+
+                    <span class = "right-note">
+                        La larghezza dell'articolo è definita nel codice CSS come
+                        70% della larghezza complessiva della pagina (o 90% per gli
+                        schermi piccoli). Siccome questa è una definizione relativa,
+                        in JavaScript ho dovuto usare <code>.offsetWidth</code>
+                        piuttosto che <code>.width</code> per definire
+                        la variabile <code>articleWidth</code>.
+                    </span>
+                </span>
+
+                Lo stesso discorso vale per la variabile <code>canvas.height</code>,
+                ovvero l'altezza del <i>canvas</i>, che è definita in funzione di
+                <code>imgWidth</code> e una costante (<code>imgRatio</code>). Il
+                ridimensionamento dell'immagine e del <i>canvas</i> è
+                reso possibile dall'ultima linea di codice, che utilizza la
+                funzione <code>addEventListener(evento, funzione)</code> per
+                chiamare <code>updateCanvas()</code> ogni volta
+                che viene ridimensionata la finestra (ovvero l'elemento <code>window</code>).
+
+                </p>
+
+                <p>
+                    Tutto questo codice compie la funzione di ridimensionare
+                    l'immagine ed il <i>canvas</i> insieme alla finestra
+                    principale, ma per mantenere costante la posizione degli elementi di testo
+                    e della luce del LED (che vengono generati dal codice
+                    JavaScript e non fanno parte dell'immagine), ho dovuto delle
+                    <b>coordinate relative</b> che cambiano con le dimensioni dell'immagine.
+                    Per ottenere ciò, ho creato una variabile <code>cu</code>
+                    (<i>canvas unit</i>) all'interno della funzione <code>updateCanvas()</code>,
+                    come mostrato nel codice qui sotto.
+
+                    <pre class = "code">
+    function updateCanvas() {
+            // Altro codice non rilevante
+
+            cu = imgWidth/100;
+    }
+                    </pre>
+
+                    Ogni volta che si effettua un ridimensionamento della finestra,
+                    si avrà quindi un nuovo valore di <code>cu</code>, che è sempre
+                    uguale ad 1/100 della larghezza dell'immagine. Le coordinate
+                    degli elementi di testo e della luce del LED, così come le loro dimensioni,
+                    si possono allora definire in funzione di <code>cu</code>: in questo
+                    modo, la loro posizione sembrerà fissa indipendentemente dalle
+                    dimensioni dell'immagine.
+
+                </p>
+
+
+            </div> <!-- article -->
+
+            <footer>
+                <hr>
+                <h3 id = "sources-header">Fonti</h3>
+
+                <ul id = "sources">
+                    <li> Horowitz, Paul, and Winfield Hill. <i>The Art of Electronics</i>. Cambridge University Press, 2016. </li>
+                    <li> Engelhardt, Mike. "LTSpice." <i>Linear Technology</i>, IV, Analog Devices,
+                        <a href="https://www.linear.com/designtools/software/#LTspice" target="_blank">
+                            https://www.linear.com/designtools/software/#LTspice</a>. </li>
+                </ul>
+            </footer>
+
+        </div> <!-- page content wrapper-->
+
+    </body>
+
+
+</html>

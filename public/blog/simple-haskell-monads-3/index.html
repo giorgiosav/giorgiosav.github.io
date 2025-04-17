@@ -1,0 +1,312 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+  A simple problem in Haskell, using monads (Part 3/3)
+</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="/sunicon.png">
+    <!--https://commons.wikimedia.org/wiki/File:Sunicon.png-->
+    
+  </head>
+  <body>
+    
+      
+
+<nav>
+
+  
+    
+      <a href="&#x2F;blog&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Articles
+      </a>
+    
+      <a href="&#x2F;about&#x2F;"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        About
+      </a>
+    
+      <a href="&#x2F;it"
+          class="nav-link nav-link-left
+                  
+                    nav-link-inactive
+                  ">
+        Italiano
+      </a>
+    
+  
+
+  
+
+
+</nav>
+
+
+    
+    <div id="content">
+      <h1>
+  A simple problem in Haskell, using monads (Part 3/3)
+</h1>
+      
+
+
+  
+    
+  
+
+
+      
+
+  
+    <div class="date">2021-12-08</div>
+  
+
+  <p>This article is the last of a 3-part series. You can read Part 1
+[here]({% link en/_posts/2021-09-25-simple-haskell-monads.md %})
+and Part 2 [here]({% link en/_posts/2021-10-30-simple-haskell-monads-2.md %}).</p>
+<p>In Part 1 of this series, we looked at how to solve the
+<a href="https://exercism.org/tracks/haskell/exercises/nucleotide-count">Nucleotide Count</a>
+problem in Haskell and came up with this.</p>
+<pre data-lang="haskell" style="background-color:#2b303b;color:#c0c5ce;" class="language-haskell "><code class="language-haskell" data-lang="haskell"><span style="color:#b48ead;">module </span><span>DNA (</span><span style="color:#8fa1b3;">nucleotideCounts</span><span>, </span><span style="color:#b48ead;">Nucleotide</span><span style="color:#8fa1b3;">(..)</span><span>) </span><span style="color:#b48ead;">where
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>Data.Map (</span><span style="color:#b48ead;">Map</span><span>, </span><span style="color:#8fa1b3;">fromList</span><span>, </span><span style="color:#8fa1b3;">adjust</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">data </span><span style="color:#d08770;">Nucleotide </span><span>= </span><span style="color:#d08770;">A </span><span>| </span><span style="color:#d08770;">C </span><span>| </span><span style="color:#d08770;">G </span><span>| </span><span style="color:#d08770;">T </span><span style="color:#b48ead;">deriving</span><span> (</span><span style="color:#a3be8c;">Eq</span><span>, </span><span style="color:#a3be8c;">Ord</span><span>, </span><span style="color:#a3be8c;">Show</span><span>)
+</span><span>
+</span><span style="color:#8fa1b3;">char2nuc </span><span style="color:#b48ead;">:: Char -&gt; Either Char Nucleotide
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">A</span><span>&#39; = </span><span style="color:#d08770;">Right A
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">C</span><span>&#39; = </span><span style="color:#d08770;">Right C
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">G</span><span>&#39; = </span><span style="color:#d08770;">Right G
+</span><span>char2nuc &#39;</span><span style="color:#a3be8c;">T</span><span>&#39; = </span><span style="color:#d08770;">Right T
+</span><span>char2nuc x = </span><span style="color:#d08770;">Left</span><span> x
+</span><span>
+</span><span style="color:#8fa1b3;">count </span><span style="color:#b48ead;">::</span><span> [</span><span style="color:#b48ead;">Nucleotide</span><span>] </span><span style="color:#b48ead;">-&gt; Map Nucleotide Int
+</span><span>count = foldr (adjust succ) basemap
+</span><span>    </span><span style="color:#b48ead;">where</span><span> basemap = fromList [(</span><span style="color:#d08770;">A</span><span>, </span><span style="color:#d08770;">0</span><span>), (</span><span style="color:#d08770;">C</span><span>, </span><span style="color:#d08770;">0</span><span>), (</span><span style="color:#d08770;">G</span><span>, </span><span style="color:#d08770;">0</span><span>), (</span><span style="color:#d08770;">T</span><span>, </span><span style="color:#d08770;">0</span><span>)]
+</span><span>
+</span><span style="color:#8fa1b3;">nucleotideCounts </span><span style="color:#b48ead;">:: String -&gt; Either Char</span><span> (</span><span style="color:#b48ead;">Map Nucleotide Int</span><span>)
+</span><span>nucleotideCounts s = count &lt;$&gt; mapM char2nuc s
+</span></code></pre>
+<p>Now we'll try to solve the same problem in Rust and C++. As you might guess, the
+crux of the problem will be to reproduce the behavior of Haskell's <code>Either a b</code>
+data type.</p>
+<h2 id="rust">Rust</h2>
+<p>Let's start with Rust, which provides us with the handy
+<a href="https://doc.rust-lang.org/std/result/enum.Result.html"><code>Result</code></a>
+type. This is
+essentially the same as Haskell's <code>Either a b</code>: the only difference is that the
+type constructors are called <code>Ok</code> and <code>Err</code>, instead of <code>Right</code> and <code>Left</code>.</p>
+<p>As a disclaimer, I must say I'm not very experienced with Rust yet, so there are
+probably much better ways to solve this problem.</p>
+<pre data-lang="rust" style="background-color:#2b303b;color:#c0c5ce;" class="language-rust "><code class="language-rust" data-lang="rust"><span style="color:#b48ead;">use </span><span>std::collections::HashMap;
+</span><span>
+</span><span>#[</span><span style="color:#bf616a;">derive</span><span>(PartialEq, Eq, Hash)]
+</span><span style="color:#b48ead;">pub enum </span><span>Nucleotide { A, C, G, T }
+</span><span>
+</span><span style="color:#b48ead;">fn </span><span style="color:#8fa1b3;">char2nuc</span><span>(</span><span style="color:#bf616a;">c</span><span>: </span><span style="color:#b48ead;">char</span><span>) -&gt; Result&lt;Nucleotide, </span><span style="color:#b48ead;">char</span><span>&gt; {
+</span><span>    </span><span style="color:#b48ead;">match</span><span> c {
+</span><span>        &#39;</span><span style="color:#a3be8c;">A</span><span>&#39; =&gt; Ok(Nucleotide::A),
+</span><span>        &#39;</span><span style="color:#a3be8c;">C</span><span>&#39; =&gt; Ok(Nucleotide::C),
+</span><span>        &#39;</span><span style="color:#a3be8c;">G</span><span>&#39; =&gt; Ok(Nucleotide::G),
+</span><span>        &#39;</span><span style="color:#a3be8c;">T</span><span>&#39; =&gt; Ok(Nucleotide::T),
+</span><span>        _ =&gt; Err(c)
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span>
+</span><span style="color:#65737e;">// combine count and nucleotideCounts from Haskell code
+</span><span style="color:#b48ead;">pub fn </span><span style="color:#8fa1b3;">count</span><span>(</span><span style="color:#bf616a;">dna </span><span>: &amp;</span><span style="color:#b48ead;">str</span><span>) -&gt; Result&lt;HashMap&lt;Nucleotide, </span><span style="color:#b48ead;">i32</span><span>&gt;, </span><span style="color:#b48ead;">char</span><span>&gt; {
+</span><span>    </span><span style="color:#b48ead;">use </span><span>Nucleotide::*;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">let mut</span><span> counts = HashMap::new();
+</span><span>    counts.</span><span style="color:#96b5b4;">insert</span><span>(A, </span><span style="color:#d08770;">0</span><span>);
+</span><span>    counts.</span><span style="color:#96b5b4;">insert</span><span>(C, </span><span style="color:#d08770;">0</span><span>);
+</span><span>    counts.</span><span style="color:#96b5b4;">insert</span><span>(G, </span><span style="color:#d08770;">0</span><span>);
+</span><span>    counts.</span><span style="color:#96b5b4;">insert</span><span>(T, </span><span style="color:#d08770;">0</span><span>);
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">for</span><span> c in dna.</span><span style="color:#96b5b4;">chars</span><span>() {
+</span><span>        </span><span style="color:#b48ead;">match </span><span style="color:#96b5b4;">char2nuc</span><span>(c) {
+</span><span>            Ok(n) =&gt; { counts.</span><span style="color:#96b5b4;">entry</span><span>(n).</span><span style="color:#96b5b4;">and_modify</span><span>(|</span><span style="color:#bf616a;">e</span><span>| { *e += </span><span style="color:#d08770;">1 </span><span>}); },
+</span><span>            Err(n) =&gt; </span><span style="color:#b48ead;">return </span><span>Err(n)
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">return </span><span>Ok(counts);
+</span><span>}
+</span></code></pre>
+<p>So this code is very similar to the Haskell version, except that in the <code>count</code>
+function we can have early termination if we find an incorrect character. In the
+Haskell version, instead, we always traverse the full list, though you <em>could</em>
+achieve early termination by using strictness (more info
+<a href="https://www.fpcomplete.com/haskell/tutorial/monad-transformers/">here</a> if you are
+interested).</p>
+<h2 id="c">C++</h2>
+<p>Unlike Rust, C++ does not have <strong>sum types</strong> such as <code>Either a b</code>. We could solve the
+problem without them, but it's much more interesting to try to create a sum type
+in C++, so here we go.</p>
+<p>The closest thing we can use to create a sum type in C++ (besides <code>union</code>s, which are not type safe)
+is <a href="https://en.cppreference.com/w/cpp/utility/variant"><code>std::variant</code></a>, from
+C++ 17. However, this still isn't equivalent, because while we can have such a thing as
+an <code>Either Char Char</code> in Haskell, in C++ a <code>std::variant&lt;char, char&gt;</code> is not
+allowed: the types must be different.</p>
+<p>Of course, in the Nucleotide Count problem, we actually do have different types,
+so we could write something like this.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">variant</span><span>&gt;
+</span><span style="color:#b48ead;">using</span><span> std::variant;
+</span><span>
+</span><span style="color:#b48ead;">enum </span><span>Nucleotide { A, C, G, T };
+</span><span>
+</span><span style="color:#b48ead;">using </span><span>EitherCharNucleotide = variant&lt;</span><span style="color:#b48ead;">char</span><span>, Nucleotide&gt;;
+</span></code></pre>
+<p>But then, what if someday we need a <code>std::variant&lt;char, char&gt;</code>, what will we do?
+We could just create two dummy <code>struct</code>s to wrap the different variants.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">variant</span><span>&gt;
+</span><span style="color:#b48ead;">using</span><span> std::variant;
+</span><span>
+</span><span style="color:#b48ead;">enum </span><span>Nucleotide { A, C, G, T };
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> L&gt;
+</span><span style="color:#b48ead;">struct </span><span>Left {
+</span><span>    L val;
+</span><span>};
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> R&gt;
+</span><span style="color:#b48ead;">struct </span><span>Right {
+</span><span>    R val;
+</span><span>};
+</span><span>
+</span><span style="color:#b48ead;">using </span><span>EitherCharNucleotide = variant&lt;Left&lt;</span><span style="color:#b48ead;">char</span><span>&gt;, Right&lt;Nucleotide&gt;&gt;;
+</span></code></pre>
+<p>This works even if we use two variants of the same type! We can just create a
+<code>std::variant&lt;Left&lt;char&gt;, Right&lt;char&gt;&gt;</code>, for example. Let's add some
+functionality by creating an actual <code>Either</code> object.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">variant</span><span>&gt;
+</span><span style="color:#b48ead;">using</span><span> std::variant;
+</span><span>
+</span><span style="color:#b48ead;">enum </span><span>Nucleotide { A, C, G, T };
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> L&gt;
+</span><span style="color:#b48ead;">struct </span><span>Left {
+</span><span>    L val;
+</span><span>};
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> R&gt;
+</span><span style="color:#b48ead;">struct </span><span>Right {
+</span><span>    R val;
+</span><span>};
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> L, </span><span style="color:#b48ead;">typename</span><span> R&gt;
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Either </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">public</span><span style="color:#eff1f5;">:
+</span><span style="color:#eff1f5;">        </span><span style="color:#8fa1b3;">Either</span><span style="color:#eff1f5;">(L </span><span style="color:#bf616a;">left</span><span style="color:#eff1f5;">) : </span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">Left</span><span style="color:#eff1f5;">&lt;L&gt;{left}) {}
+</span><span style="color:#eff1f5;">        </span><span style="color:#8fa1b3;">Either</span><span style="color:#eff1f5;">(R </span><span style="color:#bf616a;">right</span><span style="color:#eff1f5;">) : </span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">Right</span><span style="color:#eff1f5;">&lt;R&gt;{right}) {}
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">bool </span><span style="color:#8fa1b3;">right</span><span style="color:#eff1f5;">() </span><span style="color:#b48ead;">const </span><span style="color:#eff1f5;">{ </span><span style="color:#b48ead;">return </span><span style="color:#eff1f5;">std::</span><span style="color:#bf616a;">holds_alternative</span><span style="color:#eff1f5;">&lt;Right&lt;R&gt;&gt;(value); }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">        </span><span style="color:#65737e;">// these will throw an exception if the wrong type is accessed
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">const</span><span style="color:#eff1f5;"> L</span><span>&amp; </span><span style="color:#8fa1b3;">unwrap_left</span><span style="color:#eff1f5;">() </span><span style="color:#b48ead;">const </span><span style="color:#eff1f5;">{ </span><span style="color:#b48ead;">return </span><span style="color:#eff1f5;">std::</span><span style="color:#bf616a;">get</span><span style="color:#eff1f5;">&lt;Left&lt;L&gt;&gt;(value).</span><span style="color:#bf616a;">val</span><span style="color:#eff1f5;">; }
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">const</span><span style="color:#eff1f5;"> R</span><span>&amp; </span><span style="color:#8fa1b3;">unwrap_right</span><span style="color:#eff1f5;">() </span><span style="color:#b48ead;">const </span><span style="color:#eff1f5;">{ </span><span style="color:#b48ead;">return </span><span style="color:#eff1f5;">std::</span><span style="color:#bf616a;">get</span><span style="color:#eff1f5;">&lt;Right&lt;R&gt;&gt;(value).</span><span style="color:#bf616a;">val</span><span style="color:#eff1f5;">; }
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">private</span><span style="color:#eff1f5;">:
+</span><span style="color:#eff1f5;">        variant&lt;Left&lt;L&gt;, Right&lt;R&gt;&gt; value;
+</span><span style="color:#eff1f5;">}</span><span>;
+</span></code></pre>
+<p>This way, we can use, for example, <code>Either&lt;char, Nucleotide&gt;</code>, or even
+<code>Either&lt;char, char&gt;</code>.</p>
+<p>The rest of the code is pretty straightforward.</p>
+<pre data-lang="c++" style="background-color:#2b303b;color:#c0c5ce;" class="language-c++ "><code class="language-c++" data-lang="c++"><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">string_view</span><span>&gt;
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">variant</span><span>&gt;
+</span><span style="color:#b48ead;">#include </span><span>&lt;</span><span style="color:#a3be8c;">map</span><span>&gt;
+</span><span>
+</span><span style="color:#b48ead;">using</span><span> std::variant;
+</span><span style="color:#b48ead;">using</span><span> std::string_view;
+</span><span style="color:#b48ead;">using</span><span> std::map;
+</span><span>
+</span><span style="color:#b48ead;">enum </span><span>Nucleotide { A, C, G, T };
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> L&gt;
+</span><span style="color:#b48ead;">struct </span><span>Left {
+</span><span>    L val;
+</span><span>};
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> R&gt;
+</span><span style="color:#b48ead;">struct </span><span>Right {
+</span><span>    R val;
+</span><span>};
+</span><span>
+</span><span style="color:#b48ead;">template</span><span>&lt;</span><span style="color:#b48ead;">typename</span><span> L, </span><span style="color:#b48ead;">typename</span><span> R&gt;
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Either </span><span style="color:#eff1f5;">{
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">public</span><span style="color:#eff1f5;">:
+</span><span style="color:#eff1f5;">        </span><span style="color:#8fa1b3;">Either</span><span style="color:#eff1f5;">(L </span><span style="color:#bf616a;">left</span><span style="color:#eff1f5;">) : </span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">Left</span><span style="color:#eff1f5;">&lt;L&gt;{left}) {}
+</span><span style="color:#eff1f5;">        </span><span style="color:#8fa1b3;">Either</span><span style="color:#eff1f5;">(R </span><span style="color:#bf616a;">right</span><span style="color:#eff1f5;">) : </span><span style="color:#bf616a;">value</span><span style="color:#eff1f5;">(</span><span style="color:#bf616a;">Right</span><span style="color:#eff1f5;">&lt;R&gt;{right}) {}
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">bool </span><span style="color:#8fa1b3;">right</span><span style="color:#eff1f5;">() </span><span style="color:#b48ead;">const </span><span style="color:#eff1f5;">{ </span><span style="color:#b48ead;">return </span><span style="color:#eff1f5;">std::</span><span style="color:#bf616a;">holds_alternative</span><span style="color:#eff1f5;">&lt;Right&lt;R&gt;&gt;(value); }
+</span><span style="color:#eff1f5;">
+</span><span style="color:#eff1f5;">        </span><span style="color:#65737e;">// these will throw an exception if the wrong type is accessed
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">const</span><span style="color:#eff1f5;"> L</span><span>&amp; </span><span style="color:#8fa1b3;">unwrap_left</span><span style="color:#eff1f5;">() </span><span style="color:#b48ead;">const </span><span style="color:#eff1f5;">{ </span><span style="color:#b48ead;">return </span><span style="color:#eff1f5;">std::</span><span style="color:#bf616a;">get</span><span style="color:#eff1f5;">&lt;Left&lt;L&gt;&gt;(value).</span><span style="color:#bf616a;">val</span><span style="color:#eff1f5;">; }
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">const</span><span style="color:#eff1f5;"> R</span><span>&amp; </span><span style="color:#8fa1b3;">unwrap_right</span><span style="color:#eff1f5;">() </span><span style="color:#b48ead;">const </span><span style="color:#eff1f5;">{ </span><span style="color:#b48ead;">return </span><span style="color:#eff1f5;">std::</span><span style="color:#bf616a;">get</span><span style="color:#eff1f5;">&lt;Right&lt;R&gt;&gt;(value).</span><span style="color:#bf616a;">val</span><span style="color:#eff1f5;">; }
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">private</span><span style="color:#eff1f5;">:
+</span><span style="color:#eff1f5;">        </span><span style="color:#b48ead;">const</span><span style="color:#eff1f5;"> variant&lt;Left&lt;L&gt;, Right&lt;R&gt;&gt; value;
+</span><span style="color:#eff1f5;">}</span><span>;
+</span><span>
+</span><span>Either&lt;</span><span style="color:#b48ead;">char</span><span>, Nucleotide&gt; </span><span style="color:#8fa1b3;">char2nuc</span><span>(</span><span style="color:#b48ead;">char </span><span style="color:#bf616a;">c</span><span>) {
+</span><span>    </span><span style="color:#b48ead;">switch </span><span>(c) {
+</span><span>        </span><span style="color:#b48ead;">case </span><span>&#39;</span><span style="color:#a3be8c;">A</span><span>&#39;:
+</span><span>            </span><span style="color:#b48ead;">return</span><span> A;
+</span><span>        </span><span style="color:#b48ead;">case </span><span>&#39;</span><span style="color:#a3be8c;">C</span><span>&#39;:
+</span><span>            </span><span style="color:#b48ead;">return</span><span> C;
+</span><span>        </span><span style="color:#b48ead;">case </span><span>&#39;</span><span style="color:#a3be8c;">G</span><span>&#39;:
+</span><span>            </span><span style="color:#b48ead;">return</span><span> G;
+</span><span>        </span><span style="color:#b48ead;">case </span><span>&#39;</span><span style="color:#a3be8c;">T</span><span>&#39;:
+</span><span>            </span><span style="color:#b48ead;">return</span><span> T;
+</span><span>        </span><span style="color:#b48ead;">default</span><span>:
+</span><span>            </span><span style="color:#65737e;">// casts to Either because constructor is not marked explicit
+</span><span>            </span><span style="color:#b48ead;">return</span><span> c;
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span>
+</span><span style="color:#65737e;">// combine count and nucleotideCounts from Haskell code
+</span><span>Either&lt;</span><span style="color:#b48ead;">char</span><span>, map&lt;Nucleotide, </span><span style="color:#b48ead;">int</span><span>&gt;&gt; </span><span style="color:#8fa1b3;">count</span><span>(string_view </span><span style="color:#bf616a;">dna</span><span>) {
+</span><span>
+</span><span>    map&lt;Nucleotide, </span><span style="color:#b48ead;">int</span><span>&gt; </span><span style="color:#bf616a;">counts </span><span>{ {A, </span><span style="color:#d08770;">0</span><span>}, {C, </span><span style="color:#d08770;">0</span><span>}, {G, </span><span style="color:#d08770;">0</span><span>}, {T, </span><span style="color:#d08770;">0</span><span>} };
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">for </span><span>(</span><span style="color:#b48ead;">const char</span><span> c : dna) {
+</span><span>        </span><span style="color:#b48ead;">const</span><span> Either&lt;</span><span style="color:#b48ead;">char</span><span>, Nucleotide&gt; n = </span><span style="color:#bf616a;">char2nuc</span><span>(c);
+</span><span>        </span><span style="color:#b48ead;">if</span><span>(n.</span><span style="color:#bf616a;">right</span><span>())
+</span><span>            counts[n.</span><span style="color:#bf616a;">unwrap_right</span><span>()] += </span><span style="color:#d08770;">1</span><span>;
+</span><span>        </span><span style="color:#b48ead;">else </span><span>{
+</span><span>            </span><span style="color:#b48ead;">char</span><span> res = n.</span><span style="color:#bf616a;">unwrap_left</span><span>();
+</span><span>            </span><span style="color:#b48ead;">return</span><span> res;
+</span><span>        }
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">return</span><span> counts;
+</span><span>}
+</span></code></pre>
+<p><br><br>
+So, which of the 3 versions do you prefer? Personally, I think it would be great
+if C++ had sum types and pattern-matching like Rust and Haskell,
+but for now we'll have to make do.</p>
+
+
+  
+
+
+    </div>
+
+    
+
+  
+
+
+
+  </body>
+</html>

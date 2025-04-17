@@ -1,0 +1,592 @@
+<!DOCTYPE HTML>
+<html lang = "it">
+
+    <head>
+        <title> Appunti di Elettronica </title>
+        <base href="../../">
+        <link href="style.css" rel="stylesheet">
+        <link href="article_style.css" rel="stylesheet">
+        <link href="fotovoltaici/perovskite/perovskite_style.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="cel-style.css" media = "screen and (max-width:490px)">
+        <link rel="icon" href ="img/logo.png">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+    </head>
+
+    <body>
+
+
+        <script type = "text/javascript" src = "navbar.js"></script>
+        <script> document.write(navigation(3)); </script>
+        <noscript>
+            <div id="js-warning">
+                Purtroppo questo sito richiede JavaScript
+            </div>
+        </noscript>
+
+        <div id = "page-content-wrapper">
+
+            <div id = "header">
+                <h1 id = "article-title">Perovskiti I: Ellissometria </h1>
+            </div>
+
+            <div id = "publication-date">
+                <hr>
+                19 Giugno 2017
+            </div>
+
+            <div id = "article">
+
+                <h2> Premessa </h2>
+                <p>
+                    Nell'estate del 2016 vinsi una borsa del programma
+                    <a href="https://www.nsf.gov/od/oia/programs/epscor/" target="_blank">EPSCoR</a>
+                    per fare ricerca sulle applicazioni fotovoltaiche delle <b>perovskiti</b>,
+                    nel laboratorio del Professor
+                    <a href = "http://pacifici.engin.brown.edu/index.html" target="_blank">
+                    Domenico Pacifici</a>. Le perovskiti sono una classe di materiali
+                    dall'uso relativamente nuovo, che ha dimostrato alte prestazioni
+                    nella fabbricazione delle celle solari, ma che è ancora
+                    in fase di sperimentazione. Nel mio gruppo di ricerca,
+                    lavorammo soprattutto con una sostanza indicata con la sigla
+                    CH<sub>3</sub>NH<sub>3</sub>PbI<sub>3</sub>
+                    (abbreviata <b>MAPbI<sub>3</sub></b>),
+
+                    <span class = "note">
+                        <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                        <span class = "right-note">
+                            CH<sub>3</sub>NH<sub>3</sub>PbI<sub>3</sub>
+                            si legge <i>triioduro di piombo e metilammonio</i>, da cui l'abbreviazione
+                            MAPbI<sub>3</sub>, che viene spesso pronunciata "mappi".
+                        </span>
+                    </span>
+
+                    di cui studiammo
+                    dapprima le <b>proprietà ottiche</b>, per poi cercare di migliorarle
+                    attraverso la nanolitografia. In questo articolo e nel prossimo,
+                    parlerò solo di come misurammo le proprietà ottiche del materiale,
+                    in quanto la nanolitografia non andò a buon fine.
+
+                </p>
+
+                <h2> Perché le Pervoskiti? </h2>
+
+                <p>
+                    <div class="captioned-img-wrapper side-par-img">
+                        <img src = "fotovoltaici/perovskite/img/cella_completa.jpg">
+                        <div class="img-caption">
+                            I quadratini dorati sono delle piccole celle di MAPbI<sub>3</sub>.
+                        </div>
+                    </div>
+
+                    Negli ultimi anni c'è stato un gran frastuono attorno alle
+                    perovskiti, perché sono <b>economiche</b> e <b>facili</b> da fabbricare
+                    in laboratorio. Se avete letto il mio <a href = "fotovoltaici/fab_silicio/fab_silicio.html"
+                    target = "_blank">articolo</a> sulle celle di silicio, saprete
+                    già che il loro processo di fabbricazione, per quanto sia stato
+                    ottimizzato e studiato a lungo, è ancora piuttosto complesso.
+                    Le perovskiti, invece, si producono in <b>soluzione</b> e permettono
+                    la creazione di celle fotovoltaiche attraverso la semplice
+                    deposizione dei vari strati necessari. Il processo dunque
+                    <b>non richiede alte temperature</b>, in quanto
+                    non è necessaria la diffusione di elementi droganti, tipica delle giunzioni p-n. Per
+                    il sostrato, inoltre, si può semplicemente usare del vetro comune, o
+                    del quarzo.
+                </p>
+
+                <p>
+                    Per ora, non andrò nei dettagli sulla struttura di questo tipo
+                    di celle o sul loro funzionamento fisico. Come spiegherò più avanti, però,
+                    le perovskiti non portano solo vantaggi, ma hanno dei <b>problemi</b>
+                    piuttosto significativi, a cui la comunità scientifica sta cercando
+                    di trovare rimedi.
+                </p>
+
+                <h2>Proprietà Ottiche </h2>
+                    <p>
+                        Il progetto principale di quest'attività di ricerca consisteva
+                        nell'effettuare delle misurazioni che permettessero
+                        di comprendere le proprietà ottiche del MAPbI<sub>3</sub>.
+                        Nello specifico, ci interessava derivare dei valori per
+
+                        <span class = "note" >
+                            <i class = "fa fa-info-circle left-marker" onclick="togglenote(this)"></i>
+                            <span class = "left-note">
+                                Il valore dell'ampiezza della banda proibita
+                                ci dà un'indicazione dell'energia minima che deve
+                                avere un fotone affinché venga assorbito nello
+                                strato attivo della cella.
+                            </span>
+                        </span>
+
+                        <span class = "note" >
+                            <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                            <span class = "right-note">
+                                L'indice di rifrazione è un
+                                numero complesso, la cui parte reale
+                                (<span class = "math">n</span>) quantifica il cambiamento di velocità
+                                della luce in un determinato materiale, mentre la
+                                parte immaginaria (<span class = "math">&kappa;</span>)
+                                indica quanta energia della luce viene assorbita
+                                nel materiale stesso.
+                            </span>
+                        </span>
+
+
+
+                        <b>l'indice di rifrazione complesso</b> e la
+                        <b>banda proibita</b>. Per il silicio, che in elettronica è
+                        onnipresente, queste proprietà
+                        sono già note da anni fino a svariate cifre decimali, ma nel caso delle
+                        perovskiti, che sono relativamente nuove, non erano
+                        ancora stati effettuati studi approfonditi in materia.
+                        In effetti, avevamo trovato solo due pubblicazioni che affrontassero
+                        il tema, fra cui la [1], che
+                        fu il nostro punto di riferimento per confrontare i risultati
+                        che ottenemmo in seguito.
+                    </p>
+
+                    <div class="captioned-img-wrapper side-par-img">
+                        <img src = "fotovoltaici/perovskite/img/modello-4-strati2.png"  style = "border-radius:0">
+                        <div class="img-caption">
+                            Modello ottico di uno strato sottile di MAPbI<sub>3</sub> su vetro.
+                        </div>
+                    </div>
+
+                    <p>
+
+
+                        Per fare una parentesi di vita quotidiana, penso che, se decidessi
+                        mai di comprare una macchinetta per il caffè
+                        con le cialde, il primo caffè lo confronterei con quello
+                        della caffettiera normale, un po' per curiosità scientifica
+                        e un po' per verificare di aver fatto un buon investimento.
+
+                        <span class = "note" >
+                            <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                          <span class = "right-note">
+                                Va notato che l'immagine del modello ottico non rappresenta una
+                                cella completa,
+                                ma semplicemente uno strato di MAPbI<sub>3</sub>
+                                su vetro. Le celle complete hanno molti più strati, oltre
+                                ai vari contatti metallici.
+                            </span>
+                        </span>
+
+                        Allo stesso modo, nel mio gruppo di ricerca decidemmo di
+                        misurare le proprietà ottiche del MAPbI<sub>3</sub> con un metodo
+                        più "avanzato", ovvero l'<b>ellissometria</b> ed uno più "manuale", ovvero delle
+                        misurazioni dirette di <b>trasmittanza</b> e <b>riflettanza</b>.
+                        In entrambi i casi, però, era necessario un modello ottico
+                        del campione di MAPbI<sub>3</sub>, ovvero un'approssimazione da
+                        usare per descrivere i vari strati di materiali presenti. Nel
+                        nostro caso, usammo lo stesso modello della [1], mostrato qui a
+                        destra, che ha in tutto <b>quattro strati</b>: uno semi-infinito d'aria,
+                        un altro di MAPbI<sub>3</sub> ruvido dell'ordine di 10 nm, poi
+                        uno strato omogeneo di MAPbI<sub>3</sub> di circa 100 - 300 nm
+                        ed infine uno strato semi-infinito di vetro (o quarzo, nel nostro
+                        caso).
+                    </p>
+
+
+                    <h2> Ellissometria </h2>
+
+
+                    <div class="captioned-img-wrapper full-img">
+                        <img src = "fotovoltaici/perovskite/img/ellissometria.png">
+                        <div class="img-caption">
+                            Schema semplificato del meccanismo dell'ellissometria, usato per misurare
+                            le proprietà ottiche di un campione.
+                        </div>
+                    </div>
+
+                    <p>
+                    L'ellissometria è una tecnica usata per misurare varie proprietà
+                    ottiche di un materiale, fra cui, appunto, l'indice di rifrazione
+                    e la banda proibita. Come potete vedere dall'immagine qui sopra,
+                    il campione viene illuminato da diversi angoli <span class = "math">&phi;</span> con un
+                    raggio di luce polarizzata, che passa poi per un analizzatore
+                    e viene captata da un sensore. Tutti i calcoli necessari per rendere
+                    utile questo tipo di misurazione vengono poi effettuati con un
+                    programma a parte (nel nostro caso CompleteEASE, di
+                    <a href = "https://www.jawoollam.com/" target = "_blank">J.A. Woollam</a>).
+                    A grandi linee, però, possiamo capire il meccanismo di questo
+                    dispositivo nel modo seguente: la luce viene <b>polarizzata</b> con
+                    componenti sia in <i>p</i> che in <i>s</i>,
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                        <span class = "right-note">
+                            La polarizzazione <i>p</i> è parallela al piano di
+                            incidenza, mentre <i>s</i> è perpendicolare. Il piano
+                            di incidenza, invece, è quello che contiene sia il raggio incidente
+                            che quello riflesso.
+                        </span>
+                    </span>
+
+                     dopodiché
+                    il contatto con il campione ne <b>cambia la polarizzazione</b>, rendendola
+                    generica (o <b>ellittica</b>). Il nuovo stato della luce viene poi misurato
+                    con l'analizzatore ed il sensore. Da un punto di vista matematico,
+                    l'ellissometria misura il rapporto fra i due coefficienti complessi
+                    di riflessione delle due polarizzazioni <i>p</i> ed <i>s</i>, ovvero
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle left-marker" onclick="togglenote(this)"></i>
+                        <span class = "left-note">
+                            La tilde (~) viene spesso usata per indicare che
+                            una quantità è complessa, ovvero che contiene informazioni
+                            sia sull'<b>ampiezza</b> che sulla <b>fase</b> di un'onda.
+                            In questo articolo, per semplicità, non lo userò con costanza,
+                            ma va notato che <i>r</i> può essere complesso.
+                        </span>
+                    </span>
+
+                    $$ \tilde{\rho} = \frac{\widetilde{r_p}}{\widetilde{r_s}} =
+                    \tan(\Psi)e^{i \Delta}$$
+
+                    <span class = "trig">&Psi;</span> e <span class = "trig">&Delta;</span> sono due parametri definiti ad hoc:
+                    <span class = "trig"> tan(&Psi;)</span> rappresenta il rapporto di ampiezza fra le due polarizzazioni
+                    e <span class = "trig"> &Delta;</span> corrisponde alla loro differenza di fase.
+                </p>
+
+                <h2>Modelli Matematici</h2>
+
+                <p>
+                    Come si può immaginare dal titolo, qui comincia la parte un po' più complicata.
+                    Una volta ottenuti i parametri <span class = "trig"> &Psi; </span> e <span class = "trig"> &Delta; </span>, occorre un
+                    modello matematico con cui usarli per derivare le quantità
+                    che ci interessano, come l'indice di rifrazione e la banda
+                    proibita. A questo punto, entra in gioco il modello ottico
+                    a quattro strati di cui ho parlato sopra: per ogni strato,
+                    bisogna trovare un modo per esprimere matematicamente l'indice di rifrazione
+                    <span class = "math">ñ = n + i&kappa;</span>.
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                        <span class = "right-note">
+                            L'indice di rifrazione può cambiare con la lunghezza
+                            d'onda (ovvero il colore) della luce incidente. Nel nostro
+                            caso questo è un fatto molto rilevante, perché la luce
+                            del sole contiene tutti i colori.
+                        </span>
+                    </span>
+
+                    Nel caso dell'aria, <span class = "math">ñ</span> è più o meno costante e sempre
+                    uguale ad 1, per cui non c'è problema. Anche per il vetro la
+                    situazione è piuttosto semplice: <span class = "math">ñ</span> non è costante,
+                    ma è noto e può facilmente essere consultato da fonti come
+                    <a href = "https://refractiveindex.info/?shelf=glass&book=fused_silica&page=Malitson"
+                    target="_blank">refractiveindex.info</a>. Per il MAPbI<sub>3</sub>,
+                    invece, decidemmo di fare come la [1] ed usare il <b> modello
+                    di Forouhi-Bloomer</b> nella forma di Jobin Yvon [4], che usa la seguente espressione per
+                    descrivere l'indice di rifrazione dei semiconduttori amorfi.
+
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle left-marker" onclick="togglenote(this)"></i>
+                        <span class = "left-note">
+                            Il modello di Forouhi-Bloomer è un po' datato e, come scoprimmo
+                            successivamente, non più molto usato. Tuttavia, per poter confrontare
+                            i nostri risultati con la [1], decidemmo di adottarlo comunque.
+                        </span>
+                    </span>
+
+
+                    $$ \begin{array}{rcl}
+                    n(E) & = & n_{\infty} + \sum\limits_{j=1}^{N} \frac{B_j(E-E_j)+C_j}{(E-E_j)^2+\Gamma_j^2} \\
+                    \kappa(E) & = & \begin{cases} \sum\limits_{j=1}^{N} \frac{f_j(E-E_g)^2}{(E-E_j)^2+\Gamma_j^2},& \small{E > E_g} \\
+                                    0, & \small{E < E_g} \end{cases} \\
+                    dove \\
+                    B_j & = & \frac{f_j}{\Gamma_j}(\Gamma_j^2-(E_j-E_g)^2) \\
+                    C_j & = & 2 f_j \Gamma_j (E_j-E_g)
+                    \end{array}$$
+
+                </p>
+
+                <p>
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                        <span class = "right-note">
+                            <span class = "math"><i>E</i></span>: energia (lunghezza d'onda) della luce. <br>
+                            <span class = "math">E<sub>g</sub></span>: banda proibita. <br>
+                            <span class = "math">n + i&kappa;</span>: indice di rifrazione. <br>
+                            <span class = "math">N</span>: numero di oscillatori.<br>
+                            <span class = "math">f<sub>j</sub>, &Gamma;<sub>j</sub>, E<sub>j</sub></span>
+                            ed <span class = "math">n<sub>&infin;</sub></span> sono dei parametri più o meno arbitrari.
+
+
+                        </span>
+                    </span>
+
+
+                    I simboli matematici sono descritti nella nota a margine. Resta
+                    solo da precisare che <span class = "math">N</span> in realtà rappresenta anch'esso
+                    un parametro, con l'unica differenza che il suo valore fu il
+                    primo che fissammo ad essere uguale a 3. Questa scelta (indotta dalla
+                    [1]) non ha particolari giustificazioni che io sappia, se non
+                    il semplice fatto che funziona e che corrisponde al numero di
+                    massimi locali che si osservano poi nel grafico della funzione
+                    (il significato fisico di ogni parametro è spiegato in modo dettagliato
+                    nella [4]).
+                </p>
+
+                <p>
+                    Risolto (per ora) il problema dell'indice di rifrazione del
+                    MAPbI<sub>3</sub>, resta solo da capire come descrivere lo strato
+                    di ruvidità, che è composto in parte da MAPbI<sub>3</sub> ed
+                    in parte da aria. Il contributo di questo piccolo strato in realtà
+                    è piuttosto piccolo, per cui avremmo potuto ignorarlo, ma per completezza
+                    decidemmo di usare la <b>teoria di Maxwell Garnett</b> [5], che
+                    descrive uno strato poroso in funzione dei due strati adiacenti
+                    che lo compongono ed ha la seguente espressione.
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                        <span class = "right-note">
+
+                        <span class = "math">n<sub>ruv</sub></span>: indice di rifrazione dello strato ruvido.<br>
+                        <span class = "math">n<sub>a</sub></span>: indice di rifrazione dell'aria.<br>
+                        <span class = "math">n<sub>m</sub></span>: indice di rifrazione del MAPbI<sub>3</sub>. <br>
+                        <span class = "math">&phi;</span>: porosità dello strato (qui 50%). <br>
+
+                        </span>
+                    </span>
+
+                    $$n_{ruv}^2 = n_a^2\left[1- \frac{3\phi(n_a^2-n_m^2)}{2n_a^2+n_m^2+\phi(n_a^2-n_m^2)} \right] $$
+
+
+                    Esistono vari modelli matematici per descrivere uno strato ruvido o poroso
+                    e in realtà non ci soffermammo molto su quale usare, dato che
+                    il nostro modello non richiedeva un tale livello di precisione.
+                    La [5] contiene diversi modelli alternativi che si potrebbero
+                    adottare.
+                </p>
+
+                <h2> Modello Ottico di Interferenza </h2>
+
+                <div class="captioned-img-wrapper full-img">
+                    <img src = "fotovoltaici/perovskite/img/modello-3-strati-ottico.png">
+                    <div class="img-caption">
+                        Schema di un modello ottico d'interferenza a tre strati. La linea
+                        trateggiata a destra sta ad indicare che l'ultimo strato
+                        è considerato semi-infinito (cfr. [6]).
+                    </div>
+                </div>
+
+                <p>
+                    Che succede alla luce quando passa attraverso quattro strati
+                    di materiali diversi? Viene riflessa, trasmessa, assorbita,
+                    rifratta... insomma, è qui che entra in gioco il modello ottico
+                    d'interferenza, che ci permette di sapere che cosa succede alla
+                    luce dopo aver attraversato i vari strati del nostro modello.
+                    Nello schema riportato qui sopra trovate un esempio di un modello
+                    un po' più semplice a <b>tre strati</b>. Una volta capito questo, si possono
+                    derivare le equazioni per un modello a quattro strati come il nostro.
+                </p>
+
+                <span class = "note" >
+                    <i class = "fa fa-info-circle left-marker" onclick="togglenote(this)"></i>
+                    <span class = "left-note">
+                        I coefficienti di riflessione e trasmissione rappresentano
+                        il rapporto fra l'ampiezza del campo elettromagnetico
+                        della luce prima e dopo aver attraversato un determinato materiale,
+                        rispettivamente per la frazione luce riflessa e trasmessa.
+
+                    </span>
+                </span>
+
+                <p>
+                    Innanzitutto, occorre sapere che i coefficienti di <b>riflessione</b>
+                    e di <b>trasmissione</b> (<span class = "math">r</span> e <span class = "math">t</span>)
+                    sono legati agli indici di rifrazione attraverso le
+                    <a href="https://it.wikipedia.org/wiki/Leggi_di_Fresnel" target="_blank">leggi di Fresnel</a>.
+                    Per non occupare troppo spazio, non ne parlerò in questo articolo (si trovano
+                    facilmente in rete), ma è sufficiente sapere che esistono dei semplici modi
+                    per calcolare <span class = "math">r</span> e <span class = "math">t</span>
+                    fra due materiali dati i rispettivi indici di rifrazione.
+                </p>
+
+
+
+                <span class = "note" >
+                    <i class = "fa fa-info-circle right-marker" onclick="togglenote(this)"></i>
+                    <span class = "right-note">
+                    <span class = "math">r</span>: coefficiente di riflessione.<br>
+                    <span class = "math">t</span>: coefficiente di trasmissione.<br>
+                    <span class = "math">d<sub>2</sub></span>: spessore dello strato 2.<br>
+                    <span class = "math">&lambda;</span>: lunghezza d'onda. <br>
+                    <span class = "math">n<sub>i</sub></span>: indice di rifrazione (complesso) dello
+                    strato numero <span class = "math">i</span>. <br>
+                    <span class = "math">&delta;<sub>2</sub></span>: fase acquisita attraversando una volta lo strato 2.
+
+                    </span>
+                </span>
+
+
+                <p>
+                    Osservando bene lo schema riportato sopra, si può notare che il modello a tre strati
+                    è semplicemente una <b>serie geometrica</b>. Serve inoltre sapere le
+                    seguenti relazioni:
+                    $$ \begin{array}{rcl}
+                    r_{12} &=& -r_{21} \\
+                    t_{12}t_{21} &=& (1-r_{12}^2) \\
+                    \delta_2 &=& \frac{2\pi}{\lambda}n_2 d_2\cos\theta_2
+
+
+                    \end{array}$$
+                    <!-- <i>r<sub>12</sub> = &#8213;r<sub>21</sub></i> e che
+                    <i>t<sub>12</sub>t<sub>21</sub> = (1 &#8213; r<sub>12</sub><sup>2</sup>)</i> -->
+
+                    A questo punto, possiamo derivare, senza andare troppo nei
+                    dettagli, le equazioni che descrivono i <b>coefficienti di
+                    riflessione e di trasmissione complessivi</b> per tutti e tre gli strati.
+                    Nel caso dell'ellissometria, ci interessa solo il coefficiente
+                    di riflessione (<i>s</i> e <i>p</i>), che ha la seguente espressione.
+
+                    <span class = "note" >
+                        <i class = "fa fa-info-circle left-marker" onclick="togglenote(this)"></i>
+                        <span class = "left-note">
+                            Le espressioni per <span class = "math">r<sub>s</sub></span>
+                            ed <span class = "math">r<sub>p</sub></span> sono uguali,
+                            purché si utilizzino i valori corrispondenti ai piani <i>s</i> e <i>p</i>
+                            nella formula (ad esempio <span class = "math">r<sub>12<sub>s</sub> </sub></span>
+                            per il piano <i>s</i>).
+
+                        </span>
+                    </span>
+
+                    $$r = \frac{r_{12}+r_{23}e^{2i\delta_2}}{1+r_{12}r_{23}e^{2i\delta_2}}$$
+
+                    Conoscere questa formula ci permette di calcolare
+                    \(\rho =\frac{r_p}{r_s} = \tan(\Psi)e^{i\Delta} \) in modo analitico, utilizzando
+                    i vari modelli matematici per gli indici di rifrazione che ho accennato
+                    nella sezione precedente. Una volta ottenuta un'<b>espressione analitica</b>
+                    in funzione di una serie di parametri, possiamo <b>confrontarla ai
+                    dati misurati</b> ed ottenere dei valori reali per i parametri stessi.
+                    Ciò permette di ottenere entrambe le quantità richieste, ovvero la banda
+                    proibita (che viene trattata come un parametro) e l'indice di rifrazione
+                    (che viene espresso in funzione dei parametri calcolati).
+                </p>
+
+                <p>
+                    Per quanto riguarda la derivazione delle equazioni per il modello a quattro strati, è un
+                    processo è piuttosto lungo ed articolato,
+                    per cui non lo riporterò in quest'articolo. In ogni caso, per
+                    derivarlo basta costruire un modello a due strati, in cui lo strato
+                    superiore ha tutte le caratteristiche risultanti dal modello a tre strati.
+                </p>
+
+
+            <h2>Analisi dei Dati</h2>
+
+            <p>
+                Tutti i lunghi calcoli che ho descritto finora potrebbero, volendo,
+                essere eseguiti con un programma apposito come Matlab o Wolfram
+                Mathematica. In effetti, armati di pazienza e spirito scientifico,
+                scrivemmo lunghissime espressioni di codice in Mathematica, per
+                poi renderci conto che questo tipo di computazioni <b>richiedeva troppo
+                tempo</b> e sovraccaricava i processori dei nostri computer. Fortunatamente,
+                come ho già menzionato, J.A. Woollam (la compagnia che ci aveva fornito gli
+                strumenti per l'ellissometria) dispone di un programma, dal nome di <b>CompleteEASE</b>,
+                capace di compiere tutti questi calcoli in tempi relativamente
+                brevi. Ci bastò quindi inserire il nostro modello di Forouhi-Bloomer
+                (cosa che ci tenne occupati per varie giornate, tanto che finimmo
+                per scrivere un manuale di 20 pagine su come farlo) e chiedere al
+                programma di calcolare le varie incognite, tra cui l'indice di
+                rifrazione e la banda proibita del nostro famigerato MAPbI<sub>3</sub>.
+            </p>
+
+            <div class="captioned-img-wrapper full-img" style = "width: 80%">
+                <img src = "fotovoltaici/perovskite/img/mapbi-nk.png" style = "border: 1px solid black">
+                <div class="img-caption">
+                    Misurazione della parte reale (sopra) ed immaginaria (sotto)
+                    dell'indice di rifrazione del MAPbI<sub>3</sub> in funzione
+                    della lunghezza d'onda (&lambda;).
+                </div>
+            </div>
+                <p>
+                    L'immagine qui sopra riporta i tre migliori risultati che
+                    ottenemmo per l'indice di rifrazione del MAPbI<sub>3</sub>
+                    attraverso l'ellissometria. Come indicano le legende,
+                    le curve rosse rappresentano i dati della [1], che
+                    sono piuttosto simili ai nostri, a parte qualche discrepanza
+                    nella parte reale <span class = "math">n</span>.
+                    Queste differenze sono dovute, secondo me, alla <b>natura mutevole</b> delle
+                    perovskiti, che cambiano proprietà nel tempo e a seconda dei
+                    livelli di <b>umidità</b> e di <b>illuminazione</b> dell'ambiente
+                    (ne parlo più in dettaglio nella sezione "Conclusione" del <a href = "fotovoltaici/perovskite/perovskite2.html" target="_blank">prossimo articolo</a>).
+
+                    <!-- Altri parametri: Eg, spessore -->
+                </p>
+
+                <p>
+                    Per quanto riguarda la banda proibita, CompleteEASE ci
+                    fornì dei valori compresi fra 1.5 ed 1.6 eV, contro gli
+                    1.553 eV della [1]. Fra gli altri parametri calcolati ci sono
+                    anche gli spessori dei vari strati di MAPbI<sub>3</sub> del
+                    modello ottico. Questi valori forniscono un importante fattore
+                    di controllo dei propri risultati, perché possono essere
+                    misurati direttamente al microscopio (anche di questo parlo in modo più approfondito
+                    nel <a href="fotovoltaici/perovskite/perovskite2.html" target="_blank">prossimo articolo</a>).
+                </p>
+
+                <p>
+                    Dopo il relativo successo ottenuto con l'ellissometria, ripetemmo
+                    le misurazioni delle stesse proprietà con un metodo più "manuale",
+                    ovvero la <b>riflettanza</b> e la <b>trasmittanza</b> dei campioni. Ciò ci permise
+                    di avere un ulteriore termine di paragone per i risultati ottenuti
+                    (un po' magicamente) dall'ellissometria. Di tutto ciò parlo, come
+                    ho già menzionato, nel
+                    prossimo articolo, che si può aprire direttamente facendo clic
+                    sulla freccia qui sotto.
+                </p>
+
+                <div class = "next-article-link-wrapper">
+                    <a href = "fotovoltaici/perovskite/perovskite2.html">
+                        <i class = "fa fa-arrow-right" style="font-size:23"></i>
+                    </a>
+                </div>
+
+            </div> <!-- article -->
+
+
+
+
+<!-- Band gap Tauc/Cody, SEM, AFM -->
+
+
+            <footer>
+                <hr>
+                <h3 id = "sources-header">Fonti</h3>
+
+                <ul id = "sources">
+                    <li> Löper, Philipp, Michael Stuckelberger, Bjoern Niesen, Jérémie Werner, Miha Filipič, Soo-Jin Moon, Jun-Ho Yum, Marko Topič, Stefaan De Wolf, and
+                            Christophe Ballif. "Complex Refractive Index Spectra of CH<sub>3</sub>NH<sub>3</sub>PbI<sub>3</sub> Perovskite Thin Films Determined by Spectroscopic Ellipsometry and
+                            Spectrophotometry." J. Phys. Chem. Lett. The Journal of Physical Chemistry Letters 6.1 (2015): 66-71. Web.</li>
+                    <li> J.A. Woollam, <i>Ellipsometry Tutorial</i>, <a href = "https://www.jawoollam.com/resources/ellipsometry-tutorial"
+                        target = "_blank">https://www.jawoollam.com/resources/ellipsometry-tutorial</a>.</li>
+                    <li> Wikipedia, <i>Ellipsometry</i>, <a href = "https://en.wikipedia.org/wiki/Ellipsometry" target = "_blank">
+                        https://en.wikipedia.org/wiki/Ellipsometry</a>.</li>
+                    <li> Jobin Yvon, <i>New Amorphous Dispersion Formula</i>, <a href = "http://www.horiba.com/fileadmin/uploads/Scientific/Downloads/OpticalSchool_CN/TN/ellipsometer/New_Amorphous_Dispersion_Formula.pdf"
+                        target = "_blank">
+                         http://www.horiba.com/fileadmin/uploads/Scientific/Downloads/OpticalSchool_CN/TN/ellipsometer/New_Amorphous_Dispersion_Formula.pdf</a>.</li>
+
+                    <li><i>Effective Optical Properties of Nanoporous Materials - Simulations</i>, UCLA,
+                    <a href="https://www.seas.ucla.edu/%7Epilon/OpticsNanoporous.html" target = "_blank">
+                    https://www.seas.ucla.edu/%7Epilon/OpticsNanoporous.html</a>.</li>
+                    <li>Domenico Pacifici, <i>ENGN1931A: Photovoltaics Engineering - Lecture 5</i>, Brown University, 2016.</li>
+
+                </ul>
+            </footer>
+
+        </div> <!-- page-content-wrapper -->
+
+    </body>
+</html>
